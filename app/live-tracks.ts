@@ -23,12 +23,13 @@ import * as credentials from "./credentials"
 
 const LIMIT = 15
 
-// @ts-expect-error
-const config: FirebaseOptions = FIREBASE_CONFIG
+// Without a Firebase config the live tracklist cannot work, but everything
+// else in the app can, so degrade instead of failing to boot.
+const config: FirebaseOptions | null = FIREBASE_CONFIG
 
-const app = initializeApp(config)
-const auth = getAuth(app)
-const store = getFirestore(app)
+const app = config ? initializeApp(config) : null
+const auth = app ? getAuth(app) : null
+const store = app ? getFirestore(app) : null
 
 export type LiveTrack = {
 	title: string
@@ -40,6 +41,10 @@ export type LiveTrack = {
 type Handler = (err: Error | null, res: LiveTrack[] | null) => void
 
 async function liveTracks(stream: 1 | 2, fn: Handler): Promise<() => void> {
+	if (!store) {
+		return function () {}
+	}
+
 	const qry = query(
 		collection(store, "live_tracks"),
 		where("stream_pathname", "==", streamToPathname(stream)),
@@ -151,6 +156,10 @@ export class NTSLiveTracks {
 	}
 
 	async _login(email: string, password: string) {
+		if (!auth) {
+			throw new Error("live tracklist is unavailable in this build")
+		}
+
 		const key = `${email}:${password}`
 		if (!this.promises[key]) {
 			this.promises[key] = signInWithEmailAndPassword(auth, email, password)

@@ -70,10 +70,23 @@ lint:
 	@$(bin)/biome lint . $(SILENT)
 
 index: # Build the "server"-side js
-index: app/main.ts
+index: app/main.ts .env
 	@$(log) "Building app js..."
 	@mkdir -p dist
-	@env NODE_ENV=development $(bin)/esbuild --bundle --format=cjs --platform=node --external:electron --loader:.png=file app/main.ts --outfile=dist/index.cjs --define:FIREBASE_CONFIG='$(shell $(bin)/dotenv -p FIREBASE_CONFIG)'
+	@config="$$($(bin)/dotenv -p FIREBASE_CONFIG)"; \
+		env NODE_ENV=development $(bin)/esbuild --bundle --format=cjs --platform=node --external:electron --loader:.png=file app/main.ts --outfile=dist/index.cjs --define:FIREBASE_CONFIG="$${config:-null}"
+
+.env: # Recover the public Firebase config NTS ships in its own frontend bundle
+.env:
+	@$(log) "Fetching Firebase config from nts.live..."
+	@node scripts/firebase-config.mjs > .env || (rm -f .env; \
+		$(log) "Could not reach nts.live; building without the live tracklist"; \
+		touch .env)
+
+env: ## Refresh .env with the public Firebase config from nts.live
+env:
+	@rm -f .env
+	@$(MAKE) --no-print-directory .env
 
 preload: # Build the preload script
 preload: dist/preload.js

@@ -61,12 +61,13 @@ The project is structured as follows:
 
 ```
 ./
-  src/
-    main.ts     # The electron main file
+  app/          # The electron main process
+    main.ts     # Entry point
     preload.js  # A setup file for the browser context
-    client/     # The electron renderer files
-      main.ts
-      ...
+  client/       # The electron renderer files
+    main.tsx
+    ...
+  lib/          # Code shared between the two
 ```
 
 To start the app in developement mode, run:
@@ -74,6 +75,14 @@ To start the app in developement mode, run:
 ```
 make dev
 ```
+
+The renderer is served by Vite on port 5173. Set `NTS_DEV_PORT` if that port is
+taken; both Vite and Electron read it.
+
+The live tracklist talks to the Firebase project behind NTS. Its config is
+public — NTS serves it to every visitor of nts.live — so `make env` recovers it
+straight from their frontend bundle into `.env`, which the build does for you
+when `.env` is missing. Without it everything works except the live tracklist.
 
 You can now start editing the renderer files, changes will automatically
 take effect on save.
