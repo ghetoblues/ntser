@@ -98,7 +98,7 @@ export class NTSApplication {
 			await loadURL(this.window)
 			this.window.loadURL("app://-")
 		} else {
-			this.window.loadURL("http://localhost:5173")
+			this.window.loadURL(`http://localhost:${process.env.NTS_DEV_PORT ?? 5173}`)
 		}
 	}
 
