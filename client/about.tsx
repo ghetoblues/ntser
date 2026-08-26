@@ -1,6 +1,7 @@
 import classnames from "classnames"
 import { useCallback, useEffect, useRef, useState } from "react"
 import css from "./about.module.css"
+import { Arrow } from "./arrow"
 import { electron } from "./electron"
 import { useSwipe } from "./lib/use-swipe"
 import { Logo } from "./logo"
@@ -43,6 +44,16 @@ export function About(props: Props) {
 			onClick={onHide}
 			aria-hidden={hide}
 		>
+			<button
+				type="button"
+				className={css.exit}
+				onClick={onHide}
+				title="Back"
+				tabIndex={hide ? -1 : 0}
+			>
+				<Arrow direction="right" />
+			</button>
+
 			<div className={css.inner}>
 				<Logo className={css.logo} />
 				<div className={css.name}>NTS Desktop</div>

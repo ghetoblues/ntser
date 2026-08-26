@@ -89,3 +89,26 @@
 	margin-top: 0.7rem;
 	opacity: 0.45;
 }
+
+/* Marks the way out: the same arrow that moves between the screens underneath,
+   so the swipe that dismisses this panel is visible rather than guessed at. */
+.exit {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	margin: auto;
+	width: 1rem;
+	height: 3rem;
+	padding: 0;
+	border: none;
+	outline: none;
+	background: none;
+	cursor: pointer;
+	opacity: 0.3;
+	transition: opacity 200ms;
+
+	&:hover {
+		opacity: 1;
+	}
+}
