@@ -42,6 +42,14 @@
 	flex: 1 1 0;
 	min-width: 0;
 	overflow-y: auto;
+
+	/* The panel is 360px wide and split in two; a scrollbar in each column takes
+	   room the show titles need, and the columns are obviously scrollable. */
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 .channel {
