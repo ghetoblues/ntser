@@ -12,6 +12,8 @@ export type ShowInfo = {
 	ends: Date
 	location: string
 	image: string
+	show: string
+	episode: string
 }
 
 export type Info = {
@@ -70,6 +72,8 @@ type ShowData = {
 		details: {
 			name: string
 			location_long: string
+			show_alias: string
+			episode_alias: string
 			media: {
 				background_large: string
 			}
@@ -85,6 +89,8 @@ function simplify(data: ShowData): ShowInfo {
 			details: {
 				name,
 				location_long,
+				show_alias,
+				episode_alias,
 				media: { background_large },
 			},
 		},
@@ -94,6 +100,8 @@ function simplify(data: ShowData): ShowInfo {
 		name,
 		location: location_long,
 		image: background_large,
+		show: show_alias,
+		episode: episode_alias,
 		starts: new Date(start_timestamp),
 		ends: new Date(end_timestamp),
 	}

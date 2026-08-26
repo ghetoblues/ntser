@@ -20,6 +20,7 @@ import serve from "electron-serve"
 
 import * as appleMusic from "./apple-music"
 import * as credentials from "./credentials"
+import * as favourites from "./favourites"
 import * as history from "./history"
 import { NTSLiveTracks } from "./live-tracks"
 import * as preferences from "./preferences"
@@ -69,6 +70,24 @@ export class NTSApplication {
 		ipcMain.handle(
 			"apple-music",
 			(_evt: IpcMainInvokeEvent, track: appleMusic.Track) => appleMusic.open(track),
+		)
+		ipcMain.handle(
+			"favourite",
+			async (_evt: IpcMainInvokeEvent, fav: favourites.Favourite) => {
+				if (!(await this.liveTracks.ensureAuth())) {
+					throw new Error("sign in to NTS to save favourites")
+				}
+				await favourites.add(fav)
+			},
+		)
+		ipcMain.handle(
+			"is-favourite",
+			async (_evt: IpcMainInvokeEvent, fav: favourites.Favourite) => {
+				if (!(await this.liveTracks.ensureAuth())) {
+					return false
+				}
+				return favourites.has(fav)
+			},
 		)
 		ipcMain.on("my-nts", () => this.openMyNTS())
 		ipcMain.on("explore", () => this.openExplore())

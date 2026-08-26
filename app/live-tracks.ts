@@ -1,15 +1,9 @@
 import { type IpcMainInvokeEvent, type WebContents, ipcMain } from "electron"
-import { type FirebaseOptions, initializeApp } from "firebase/app"
-import {
-	type UserCredential,
-	getAuth,
-	signInWithEmailAndPassword,
-} from "firebase/auth"
+import { type UserCredential, signInWithEmailAndPassword } from "firebase/auth"
 import {
 	type DocumentData,
 	type QuerySnapshot,
 	collection,
-	getFirestore,
 	limit,
 	onSnapshot,
 	orderBy,
@@ -20,16 +14,9 @@ import {
 import { type Stream, pathnameToStream, streamToPathname } from "~/lib/stream"
 
 import * as credentials from "./credentials"
+import { auth, store } from "./firebase"
 
 const LIMIT = 15
-
-// Without a Firebase config the live tracklist cannot work, but everything
-// else in the app can, so degrade instead of failing to boot.
-const config: FirebaseOptions | null = FIREBASE_CONFIG
-
-const app = config ? initializeApp(config) : null
-const auth = app ? getAuth(app) : null
-const store = app ? getFirestore(app) : null
 
 export type LiveTrack = {
 	title: string
@@ -103,7 +90,7 @@ export class NTSLiveTracks {
 	// keychain access on macOS. Hold that off until the tracklist is actually
 	// wanted, so opening the app does not greet everyone with a dialog - and
 	// people who never signed in never see one at all.
-	async _ensureAuth(): Promise<boolean> {
+	async ensureAuth(): Promise<boolean> {
 		if (!this.ready) {
 			this.ready = this._readAndAuth()
 		}
@@ -134,7 +121,7 @@ export class NTSLiveTracks {
 	}
 
 	async subscribe() {
-		if (!(await this._ensureAuth())) {
+		if (!(await this.ensureAuth())) {
 			return
 		}
 

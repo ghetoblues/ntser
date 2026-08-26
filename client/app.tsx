@@ -17,6 +17,7 @@ import { useMetadata } from "./metadata"
 import type { ShowInfo } from "../app/show"
 import { Arrow } from "./arrow"
 import { Channel as ChannelCard } from "./channel"
+import { Favourite } from "./favourite"
 import { Help } from "./help"
 import { Login } from "./login"
 import { Mixcloud } from "./mixcloud"
@@ -86,6 +87,15 @@ export function NTS() {
 	const tracks1 = useLiveTracks(1)
 	const tracks2 = useLiveTracks(2)
 	const currentTracks = playing === 1 ? tracks1 : tracks2
+
+	// Whatever is on air on the channel being looked at, which is what the
+	// favourite button acts on.
+	const liveShow =
+		index === 0
+			? live.data?.channel1.now
+			: index === 1
+				? live.data?.channel2.now
+				: null
 
 	const next = useCallback(function () {
 		setIndex((idx) => (idx + 1) % 3)
@@ -270,6 +280,9 @@ export function NTS() {
 			<button type="button" onClick={next} className={css.next}>
 				<Arrow direction="right" />
 			</button>
+			{indexToChannel[index] !== "show" && (
+				<Favourite show={liveShow?.show ?? ""} episode={liveShow?.episode ?? ""} />
+			)}
 			{indexToChannel[index] === "show" && (
 				<Tracklist
 					channel="show"
