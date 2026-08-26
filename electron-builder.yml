@@ -1,5 +1,5 @@
 productName: NTS Desktop
-appId: "be.romeovansnick.nts"
+appId: "org.observepeople.nts"
 
 directories:
   app: dist
