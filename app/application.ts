@@ -2,22 +2,24 @@ import EventEmitter from "node:events"
 import path from "node:path"
 import bplist from "bplist-parser"
 import {
+	app,
 	BrowserWindow,
+	clipboard,
+	globalShortcut,
 	type IpcMainEvent,
 	type IpcMainInvokeEvent,
+	ipcMain,
 	Menu,
 	type NativeImage,
 	Notification,
-	Tray,
-	app,
-	clipboard,
-	globalShortcut,
-	ipcMain,
 	nativeImage,
 	shell,
+	Tray,
 } from "electron"
 import serve from "electron-serve"
-
+import menubar from "../logos/menu.png"
+import menubarOne from "../logos/menu-one.png"
+import menubarTwo from "../logos/menu-two.png"
 import * as appleMusic from "./apple-music"
 import * as credentials from "./credentials"
 import * as favourites from "./favourites"
@@ -25,10 +27,6 @@ import * as history from "./history"
 import { NTSLiveTracks } from "./live-tracks"
 import * as preferences from "./preferences"
 import { show } from "./show"
-
-import menubarOne from "../logos/menu-one.png"
-import menubarTwo from "../logos/menu-two.png"
-import menubar from "../logos/menu.png"
 
 const loadURL = serve({ directory: "client" })
 
@@ -120,7 +118,7 @@ export class NTSApplication {
 
 		globalShortcut.register("Control+N", () => this.toggle())
 
-		setTimeout(() => app.dock.hide(), 1500)
+		setTimeout(() => app.dock?.hide(), 1500)
 		await this.loadClient()
 
 		// The show screen is otherwise only reachable by dropping a link onto the
@@ -250,8 +248,8 @@ export class NTSApplication {
 	// You get here holding a link, not a file: a picker filtered to .webloc was
 	// asking for a shortcut almost nobody has on disk. Offer the clipboard, since
 	// copying the link is how the link gets to you.
-	browse() {
-		const pasted = clipboard.readText().trim()
+	async browse() {
+		const pasted = (await clipboard.readText()).trim()
 		const suggestion = pasted.startsWith("https://www.nts.live/shows/") ? pasted : ""
 
 		this.window.webContents.send("load-show", suggestion)

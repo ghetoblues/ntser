@@ -147,7 +147,7 @@ export function useLiveInfo(options: Options): InfoState {
 	const next = useCallback(
 		function () {
 			setState(function (state) {
-				if (!state.data || !state.data.channel1.next || !state.data.channel2.next) {
+				if (!state.data?.channel1.next || !state.data.channel2.next) {
 					return state
 				}
 

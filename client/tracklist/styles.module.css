@@ -17,7 +17,7 @@
 	}
 
 	&:hover {
-		background: rgba(76, 76, 76, 0.35) !important;
+		background: rgba(76, 76, 76, 0.35);
 	}
 
 	&:active {
@@ -91,6 +91,6 @@
 	}
 
 	&:hover {
-		opacity: 1 !important;
+		opacity: 1;
 	}
 }

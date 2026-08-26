@@ -1,7 +1,6 @@
 import { type MouseEvent, useRef } from "react"
-import css from "./controls.module.css"
-
 import type { ShowInfo } from "~/app/show"
+import css from "./controls.module.css"
 
 type Props = {
 	duration: number

@@ -1,10 +1,8 @@
 import classnames from "classnames"
 import { useCallback, useEffect, useState } from "react"
-
+import css from "./about.module.css"
 import { electron } from "./electron"
 import { Logo } from "./logo"
-
-import css from "./about.module.css"
 
 const SOURCE = "https://github.com/romeovs/nts-desktop"
 const FORK = "https://github.com/ghetoblues/nts-desktop"

@@ -6,9 +6,8 @@ import type { ShowInfo } from "~/app/show"
 import { Controls, formatDuration } from "./controls"
 import { Favourites } from "./favourites"
 import { PlayButton } from "./play"
-import { Tracklist } from "./tracklist/index"
-
 import css from "./show.module.css"
+import { Tracklist } from "./tracklist/index"
 
 type Props = {
 	show: ShowInfo | null
@@ -45,7 +44,7 @@ export function Show(props: Props) {
 	return (
 		<div className={css.show} data-show="true">
 			<div className={css.top}>
-				<img src={image} className={css.image} draggable={false} />
+				<img src={image} className={css.image} draggable={false} alt="" />
 				<button
 					type="button"
 					className={classnames(css.header, playing && css.playing)}

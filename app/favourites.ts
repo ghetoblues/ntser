@@ -1,7 +1,7 @@
 import {
-	type DocumentData,
 	addDoc,
 	collection,
+	type DocumentData,
 	deleteDoc,
 	getDocs,
 	limit,

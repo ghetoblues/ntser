@@ -1,118 +1,121 @@
-<img src="./screens/icon.png" width="144" height="144" />
+<img src="./logos/logo.png" width="120" height="120" alt="" />
 
 # NTS Desktop
 
-[![CI/CD](https://github.com/romeovs/nts-desktop/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/romeovs/nts-desktop/actions/workflows/ci-cd.yml)
+[![CI/CD](https://github.com/ghetoblues/nts-desktop/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ghetoblues/nts-desktop/actions/workflows/ci-cd.yml)
 
-An unofficial desktop app for NTS built in Electron.
+A menubar player for [NTS Radio](https://www.nts.live) — the two live channels
+and the archive — built in Electron.
 
 > **This is a fork** of [romeovs/nts-desktop](https://github.com/romeovs/nts-desktop)
-> by Romeo Van Snick, MIT licensed, kept under the same licence. It restores live
-> playback after NTS moved its streams, adds Apple Music links in the tracklist
-> and NTS favourites in the window, and drops the buttons that led out of the
-> app. Not affiliated with or endorsed by NTS Radio.
+> by Romeo Van Snick, kept under the same MIT licence. It is not affiliated with
+> or endorsed by NTS Radio.
+
+## What this fork changes
+
+- **Live playback works again.** NTS moved its streams to radiomast, and the
+  app's content policy still named the old host, so every channel failed the
+  moment you pressed play ([#31](https://github.com/romeovs/nts-desktop/issues/31),
+  [#32](https://github.com/romeovs/nts-desktop/issues/32)).
+- **Tracklist entries open in Apple Music.** Each track gets a button that
+  resolves it against the store and opens the Music app, falling back to a
+  search when a set lists a track as `ID` or the record is not there.
+- **Favourites live in the window.** Save whatever is on air with the heart on a
+  live channel, and browse what you saved from the archive screen — the app
+  loads the latest episode in place instead of sending you to a browser.
+- **Pause is where you can reach it.** The archive screen's play button sat
+  below a full-height image; it now lives in the header, like the channels.
+- **Paste a link to load a show,** rather than picking a `.webloc` file almost
+  nobody keeps on disk. The clipboard is offered when it already holds one.
+- **No keychain prompt on every launch.** Credentials are read when the
+  tracklist needs them, not at boot.
+- **It builds from a fresh clone.** The Firebase config for the live tracklist
+  was encrypted in the repository, so only the maintainer could build the app.
+- Buttons that only led out of the app — the Discord link, the live tracklist
+  link — are gone.
 
 ## Usage
 
 - Click the NTS logo in the menubar to open the player.
-- Use the left and right buttons on the player to navigate between channels. You
-  can also use the arrow keys.
-- Click the play/stop button on the live streams to play them. Spacebar works
-  too.
-- On the live streams click the tracklist button in to top right corner to open
-  the live tracklist in the browser. (This will only work if you are an [NTS
-  Supporter](https://www.nts.live/supporters)).
-- Drop the link from the browser to an archive show on the menubar icon to play
-  it, `.webloc` files work too.
-- On the archive screen, you can scroll down to reveal the controls and
-  tracklist.
-- Click on a tracklist item to copy the information.
-- Press `⌘Q` when the window is open.
-- You can refresh the app with `⌘R`
-- `ctrl + N` will open NTS Desktop
-- Pressing `T` when the window is open will open the tracklist
-- Pressing `C` when the window is open will open the chat window for that
-  channel
-- Pressing `1` or `2` when the window is open will start playing the
-  corresponding channel
-- Pressing `-` and `+` will control the volume of the player
+- Left and right buttons, or the arrow keys, move between the channels and the
+  archive.
+- Click the channel number, or press space, to play and pause. `1` and `2` play
+  the corresponding channel.
+- The heart saves the show on air to your NTS favourites; press it again to
+  remove it. The archive screen lists what you saved.
+- Drop a link to an archive show on the menubar icon, or use **Load Archive
+  Show…** from the menu and paste it. `.webloc` files work too.
+- On the archive screen, scroll down for the seek bar and the tracklist.
+- Click a track to copy it, or the note beside it to open it in Apple Music.
+- `-` and `+`, or the up and down arrows, control the volume.
+- `?` shows the shortcuts, `⌘R` reloads, `⌘Q` quits, `ctrl + N` opens the app.
 
-<img src="./screens/rec1.gif" width="400" />
-<img src="./screens/rec2.gif" width="400" />
-<img src="./screens/rec3.gif" width="400" />
+The live tracklist is only available to [NTS Supporters](https://www.nts.live/supporters)
+and needs you to sign in from the menu; everything else works without an account.
 
 ## Installation
 
-Go to the [Releases Page](https://github.com/romeovs/nts-desktop/releases) and
-fetch the `.dmg` file from the latest release.
+Grab the `.dmg` from the [releases page](https://github.com/ghetoblues/nts-desktop/releases),
+open it, and drag **NTS Desktop** to Applications.
 
-Open the disk image and drag the `NTS Desktop` app to `Applications` and open
-it.
-
-The first time you open the app, it will show an erro because the app isn't
-signed. I do not have a Mac Developer license.
-
-To open the app anyway, you can:
+The app is not signed — that needs a paid Apple Developer account — so the first
+launch is refused. Open it anyway with:
 
 ```
-System Preferences > Security & Privacy > General > Open Anyway
+System Settings > Privacy & Security > Open Anyway
 ```
 
-I have only tested this app on macOS, so I can't guarantee it works on Linux or
-Windows. If people want to help me port it over, shoot me a message, PR's are welcome!
+Only macOS is tested. The app should mostly work elsewhere, and patches to make
+it properly work are welcome.
 
-## Local Development
+## Development
 
-The project is structured as follows:
+```
+make dev        # run it, with the renderer reloading on save
+make check      # lint, formatting and types
+make build app  # bundle to bundle/mac-universal/NTS Desktop.app
+make help       # every rule
+```
+
+The tree is laid out as:
 
 ```
 ./
-  app/          # The electron main process
-    main.ts     # Entry point
-    preload.js  # A setup file for the browser context
-  client/       # The electron renderer files
+  app/        # electron main process
+    main.ts   # entry point
+    preload.js
+  client/     # renderer
     main.tsx
-    ...
-  lib/          # Code shared between the two
+  lib/        # shared between the two
+  scripts/    # build-time helpers
 ```
 
-To start the app in developement mode, run:
+Changes under `client/` take effect on save. Changes to the main process need a
+restart.
 
-```
-make dev
-```
+The renderer is served by Vite on port 5173; set `NTS_DEV_PORT` if that is
+taken, and both sides will follow. `NTS_OPEN_SHOW` loads an episode at startup,
+which saves dragging a link in every time you touch the archive screen.
 
-The renderer is served by Vite on port 5173. Set `NTS_DEV_PORT` if that port is
-taken; both Vite and Electron read it.
+### The Firebase config
 
-The live tracklist talks to the Firebase project behind NTS. Its config is
-public — NTS serves it to every visitor of nts.live — so `make env` recovers it
-straight from their frontend bundle into `.env`, which the build does for you
-when `.env` is missing. Without it everything works except the live tracklist.
+The live tracklist reads from the Firebase project behind NTS. That config is
+public — NTS serves it to every visitor of nts.live — so `scripts/firebase-config.mjs`
+recovers it from their frontend bundle into `.env`, which the build does for you
+whenever `.env` is missing. `make env` refreshes it. Without it everything works
+except the live tracklist.
 
-Reading the tracklist itself needs an NTS Supporter account. A packaged build
-keeps those credentials in the keychain, but development builds are unsigned, so
-macOS would ask to authorise the keychain on every rebuild. `make dev` therefore
-runs with a mock keychain; put `NTS_EMAIL` and `NTS_PASSWORD` in `.env` if you
-want the live tracklist while developing.
+### Signing in while developing
 
-You can now start editing the renderer files, changes will automatically
-take effect on save.
-
-Note that changes to the main process (`app/main.ts` and `app/preload.js`)
-require a restart to take effect.
-
-To build the application run:
-
-```
-make build app
-```
-
-The app will now be in `bundle/mac-universal/NTS Desktop.app`.
+Reading the tracklist and writing favourites need an NTS Supporter account. A
+packaged build keeps those credentials in the keychain, but development builds
+are unsigned, so macOS would ask to authorise the keychain on every rebuild.
+`make dev` therefore runs with a mock keychain — put `NTS_EMAIL` and
+`NTS_PASSWORD` in `.env` instead. See `.env.example`.
 
 ## Acknowledgement
 
-The main idea for the app came from the excellent
-[nts-desktop-app](https://github.com/tedigc/nts-desktop-app), the implementation
-of which is way simpler and more elegant, but lacks some of the features I
-wanted.
+Everything here rests on [nts-desktop](https://github.com/romeovs/nts-desktop)
+by Romeo Van Snick, which in turn credits
+[nts-desktop-app](https://github.com/tedigc/nts-desktop-app) by tedigc for the
+original idea.

@@ -1,17 +1,17 @@
-import { type IpcMainInvokeEvent, type WebContents, ipcMain } from "electron"
-import { type UserCredential, signInWithEmailAndPassword } from "firebase/auth"
+import { type IpcMainInvokeEvent, ipcMain, type WebContents } from "electron"
+import { signInWithEmailAndPassword, type UserCredential } from "firebase/auth"
 import {
-	type DocumentData,
-	type QuerySnapshot,
 	collection,
+	type DocumentData,
 	limit,
 	onSnapshot,
 	orderBy,
+	type QuerySnapshot,
 	query,
 	where,
 } from "firebase/firestore"
 
-import { type Stream, pathnameToStream, streamToPathname } from "~/lib/stream"
+import { pathnameToStream, type Stream, streamToPathname } from "~/lib/stream"
 
 import * as credentials from "./credentials"
 import { auth, store } from "./firebase"
@@ -41,7 +41,6 @@ async function liveTracks(stream: 1 | 2, fn: Handler): Promise<() => void> {
 
 	function handleSnapshot(snapshot: QuerySnapshot<DocumentData, DocumentData>) {
 		const res: LiveTrack[] = []
-		// biome-ignore lint/complexity/noForEach: we can't use for of here
 		snapshot.forEach(function (doc) {
 			const data = doc.data()
 			res.push({

@@ -16,7 +16,9 @@
 	padding: 0;
 
 	opacity: 0.15;
-	transition: opacity 200ms, background 200ms;
+	transition:
+		opacity 200ms,
+		background 200ms;
 }
 
 .next {

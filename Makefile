@@ -58,13 +58,13 @@ typecheck.watch: typecheck
 
 format: ## Format all code
 format:
-	@$(bin)/biome check . --linter-enabled=false --organize-imports-enabled=true --fix
+	@$(bin)/biome check . --linter-enabled=false --write
 
 
 formatting: ## Check the formatting of all code
 formatting:
 	@$(log) "Checking format..."
-	@$(bin)/biome check . --linter-enabled=false --organize-imports-enabled=true $(SILENT)
+	@$(bin)/biome check . --linter-enabled=false $(SILENT)
 
 
 lint: ## Check lint

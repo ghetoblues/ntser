@@ -16,7 +16,7 @@ export async function read(): Promise<Preferences> {
 	try {
 		const content = await fs.readFile(filename, "utf-8")
 		return JSON.parse(content)
-	} catch (err) {
+	} catch (_err) {
 		return defaults
 	}
 }

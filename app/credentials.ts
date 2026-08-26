@@ -37,7 +37,7 @@ export async function read(): Promise<Credentials | null> {
 			return creds
 		}
 		return null
-	} catch (err) {
+	} catch (_err) {
 		return null
 	}
 }

@@ -1,9 +1,8 @@
 import classnames from "classnames"
 import { type MouseEvent, useCallback } from "react"
 import { electron } from "~/client/electron"
-import { notify } from "~/client/notifications"
-
 import { Indicator } from "~/client/indicator"
+import { notify } from "~/client/notifications"
 
 import css from "./styles.module.css"
 
@@ -79,7 +78,7 @@ function TrackItem(props: TrackProps) {
 				if (opened === "search") {
 					notify({ message: "not on Apple Music, searching", ttl: 2500 })
 				}
-			} catch (err) {
+			} catch (_err) {
 				notify({ message: "could not open Apple Music", ttl: 2500 })
 			}
 		},
@@ -129,7 +128,11 @@ function TrackItem(props: TrackProps) {
 				onClick={handleAppleMusic}
 				title="Open in Apple Music"
 			>
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+				<svg
+					aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+				>
 					<path d="M20 3v12.5a3.5 3.5 0 11-2-3.16V7.24L10 8.6v9.9a3.5 3.5 0 11-2-3.16V5.4z" />
 				</svg>
 			</button>

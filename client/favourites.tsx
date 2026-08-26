@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from "react"
 
 import { electron } from "./electron"
-import { useEvent } from "./lib/use-event"
-
 import css from "./favourites.module.css"
+import { useEvent } from "./lib/use-event"
 
 type Episode = {
 	show: string
