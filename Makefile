@@ -26,7 +26,10 @@ start: index preload run
 run: ## Run the application (not recommended, use start instead)
 run:
 	@$(log) "Running app"
-	@$(bin)/electron dist
+	@# --use-mock-keychain keeps the unsigned development build from asking for
+	@# keychain access on every launch. This rule only ever runs unpackaged code,
+	@# so the packaged app still uses the real keychain.
+	@$(bin)/electron dist --use-mock-keychain
 
 build: ## Build all the JavaScript, without bundling the Electron app
 build: index preload client packages

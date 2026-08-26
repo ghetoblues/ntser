@@ -84,7 +84,6 @@ export class NTSApplication {
 		globalShortcut.register("Control+N", () => this.toggle())
 
 		setTimeout(() => app.dock.hide(), 1500)
-		await this.liveTracks.init()
 		await this.loadClient()
 	}
 

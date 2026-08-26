@@ -85,10 +85,12 @@ export class NTSLiveTracks {
 	}
 
 	creds: any | null
+	ready: Promise<boolean> | null
 
 	constructor(webContents: WebContents) {
 		this.webContents = webContents
 		this.unsubscribe = null
+		this.ready = null
 		this.previous = {
 			stream1: [],
 			stream2: [],
@@ -97,22 +99,45 @@ export class NTSLiveTracks {
 		ipcMain.handle("login-credentials", this._handleLogin.bind(this))
 	}
 
-	async init() {
-		this.creds = await credentials.read()
-		if (!this.creds) {
-			return
+	// Authenticating means reading the stored credentials, which prompts for
+	// keychain access on macOS. Hold that off until the tracklist is actually
+	// wanted, so opening the app does not greet everyone with a dialog - and
+	// people who never signed in never see one at all.
+	async _ensureAuth(): Promise<boolean> {
+		if (!this.ready) {
+			this.ready = this._readAndAuth()
 		}
 
-		await this._auth()
+		return this.ready
+	}
+
+	async _readAndAuth(): Promise<boolean> {
+		this.creds = await credentials.read()
+		if (!this.creds) {
+			return false
+		}
+
+		try {
+			await this._auth()
+			return true
+		} catch (err) {
+			console.warn("could not sign in to NTS:", err)
+			return false
+		}
 	}
 
 	async logout() {
 		this.unsubscribe?.()
 		this.creds = null
+		this.ready = null
 		await credentials.clear()
 	}
 
 	async subscribe() {
+		if (!(await this._ensureAuth())) {
+			return
+		}
+
 		const strm1 = await liveTracks(1, (err, res) => {
 			if (err) {
 				console.warn(err)
@@ -177,6 +202,7 @@ export class NTSLiveTracks {
 		try {
 			await this._login(email, password)
 			await credentials.write({ email, password })
+			this.ready = Promise.resolve(true)
 			this.subscribe()
 			return true
 		} catch (err) {

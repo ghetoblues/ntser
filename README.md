@@ -84,10 +84,16 @@ public — NTS serves it to every visitor of nts.live — so `make env` recovers
 straight from their frontend bundle into `.env`, which the build does for you
 when `.env` is missing. Without it everything works except the live tracklist.
 
+Reading the tracklist itself needs an NTS Supporter account. A packaged build
+keeps those credentials in the keychain, but development builds are unsigned, so
+macOS would ask to authorise the keychain on every rebuild. `make dev` therefore
+runs with a mock keychain; put `NTS_EMAIL` and `NTS_PASSWORD` in `.env` if you
+want the live tracklist while developing.
+
 You can now start editing the renderer files, changes will automatically
 take effect on save.
 
-Note that changes to the main process (`src/main.ts` and `src/preload.js`)
+Note that changes to the main process (`app/main.ts` and `app/preload.js`)
 require a restart to take effect.
 
 To build the application run:

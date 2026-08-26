@@ -9,7 +9,26 @@ export type Credentials = {
 
 const filename = path.join(app.getPath("userData"), "credentials.json")
 
+// Reading the stored credentials decrypts them through safeStorage, which on
+// macOS reaches into the keychain and, for an unsigned build, asks the user to
+// authorise it. Development builds are unsigned and rebuilt constantly, so that
+// prompt would show up on every run: let NTS_EMAIL and NTS_PASSWORD (from the
+// gitignored .env) stand in for the keychain instead.
+function fromEnvironment(): Credentials | null {
+	const { NTS_EMAIL: email, NTS_PASSWORD: password } = process.env
+	if (!email || !password) {
+		return null
+	}
+
+	return { email, password }
+}
+
 export async function read(): Promise<Credentials | null> {
+	const env = fromEnvironment()
+	if (env) {
+		return env
+	}
+
 	try {
 		const buf = await fs.readFile(filename)
 		const content = safeStorage.decryptString(buf)
