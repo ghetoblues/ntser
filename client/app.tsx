@@ -25,6 +25,7 @@ import { Mixcloud } from "./mixcloud"
 import { Notifications } from "./notifications"
 import { Offline } from "./offline"
 import { Player } from "./player"
+import { Schedule } from "./schedule"
 import { Show } from "./show"
 import { Slide, Slider } from "./slider"
 import { Soundcloud } from "./soundcloud"
@@ -65,6 +66,7 @@ export function NTS() {
 	// The archive slide shows either the loaded show or the favourites list. The
 	// audio elements live outside the slider, so browsing does not stop playback.
 	const [browsing, setBrowsing] = useState(false)
+	const [isShowingSchedule, setIsShowingSchedule] = useState(false)
 	const { preferences, updatePreferences } = usePreferences()
 
 	const [index, setIndex] = useState<number>(0)
@@ -144,6 +146,11 @@ export function NTS() {
 				return
 			}
 
+			if (isShowingSchedule) {
+				setIsShowingSchedule(false)
+				return
+			}
+
 			if (isShowingHelp) {
 				setIsShowingHelp(false)
 				return
@@ -156,7 +163,7 @@ export function NTS() {
 
 			electron.send("close")
 		},
-		[isShowingAbout, isShowingHelp, loadShow],
+		[isShowingAbout, isShowingSchedule, isShowingHelp, loadShow],
 	)
 
 	useEffect(
@@ -184,7 +191,12 @@ export function NTS() {
 	useKeydown("ArrowLeft", prev)
 	useKeydown("?", () => setIsShowingHelp((x) => !x))
 	useKeydown(" ", togglePlaying, [playing, index])
-	useKeydown("Escape", close, [isShowingAbout, isShowingHelp, loadShow])
+	useKeydown("Escape", close, [
+		isShowingAbout,
+		isShowingSchedule,
+		isShowingHelp,
+		loadShow,
+	])
 	useKeydown("t", () => electron.send("tracklist", indexToChannel[index]), [index])
 	useKeydown("1", () => setPlaying(playing === 1 ? null : 1), [playing])
 	useKeydown("2", () => setPlaying(playing === 2 ? null : 2), [playing])
@@ -194,6 +206,12 @@ export function NTS() {
 	useKeydown("ArrowDown", decreaseVolume)
 
 	useEvent("about", () => setIsShowingAbout(true))
+	useEvent("schedule", () => setIsShowingSchedule(true))
+	useEvent("favourites", function () {
+		setIsShowingSchedule(false)
+		setBrowsing(true)
+		setIndex(channelToIndex.show)
+	})
 	useEvent("load-show", (suggestion: string) => setLoadShow(suggestion))
 
 	useEvent("open-show", async function (show: ShowInfo) {
@@ -355,6 +373,11 @@ export function NTS() {
 			<Offline hide={!isOffline} />
 			<Help hide={!isShowingHelp} onHide={() => setIsShowingHelp(false)} />
 			<About hide={!isShowingAbout} onHide={() => setIsShowingAbout(false)} />
+			<Schedule
+				hide={!isShowingSchedule}
+				live={live}
+				onHide={() => setIsShowingSchedule(false)}
+			/>
 			<LoadShow
 				show={loadShow !== null}
 				suggestion={loadShow ?? ""}

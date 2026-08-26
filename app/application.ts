@@ -284,8 +284,10 @@ export class NTSApplication {
 		shell.openExternal(`https://www.nts.live/live-tracklist/${channel}`)
 	}
 
+	// Both of these used to send you to nts.live. The app can show them itself.
 	openMyNTS() {
-		shell.openExternal("https://www.nts.live/my-nts/favourites/shows")
+		this.window.webContents.send("favourites")
+		this.open()
 	}
 
 	openExplore() {
@@ -293,7 +295,8 @@ export class NTSApplication {
 	}
 
 	openSchedule() {
-		shell.openExternal("https://www.nts.live/schedule")
+		this.window.webContents.send("schedule")
+		this.open()
 	}
 
 	async storePreferences(prefs: Partial<preferences.Preferences>) {

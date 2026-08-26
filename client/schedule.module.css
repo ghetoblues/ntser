@@ -1,0 +1,83 @@
+.schedule {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: black;
+	color: white;
+	opacity: 1;
+	transition: opacity 300ms;
+
+	display: flex;
+	flex-direction: column;
+	padding: 0.5rem;
+	box-sizing: border-box;
+
+	z-index: 1002;
+	cursor: default;
+}
+
+.hide {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.heading {
+	flex-shrink: 0;
+	font-weight: bold;
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	margin-bottom: 0.4rem;
+}
+
+.columns {
+	display: flex;
+	gap: 0.5rem;
+	flex-grow: 1;
+	min-height: 0;
+}
+
+.column {
+	flex: 1 1 0;
+	min-width: 0;
+	overflow-y: auto;
+}
+
+.channel {
+	position: sticky;
+	top: 0;
+	background: black;
+	font-weight: 900;
+	font-size: 0.75rem;
+	padding-bottom: 0.2rem;
+}
+
+.list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	& li {
+		margin-bottom: 0.35rem;
+	}
+}
+
+.time {
+	display: block;
+	font-size: 0.65rem;
+	opacity: 0.55;
+}
+
+.name {
+	display: block;
+	font-size: 0.7rem;
+	line-height: 1.25;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+.empty {
+	font-size: 0.7rem;
+	opacity: 0.4;
+}
