@@ -115,6 +115,7 @@ export class NTSApplication {
 		globalShortcut.register("Control+N", () => this.toggle())
 
 		setTimeout(() => app.dock.hide(), 1500)
+		this.setupAbout()
 		await this.loadClient()
 
 		// The show screen is otherwise only reachable by dropping a link onto the
@@ -263,7 +264,33 @@ export class NTSApplication {
 		notification.show()
 	}
 
+	// This is a fork, so the panel names who wrote the app, what this build
+	// changed, and under which licence - the LICENSE file travels with the app,
+	// but nobody reads a file they cannot see.
+	setupAbout() {
+		app.setAboutPanelOptions({
+			applicationName: "NTS Desktop",
+			applicationVersion: app.getVersion(),
+			copyright: [
+				"Copyright © 2022 Romeo Van Snick. MIT licensed.",
+				"",
+				"An unofficial player, not affiliated with or endorsed by NTS Radio.",
+			].join("\n"),
+			credits: [
+				"Original app by Romeo Van Snick",
+				"github.com/romeovs/nts-desktop",
+				"",
+				"This build is a modified fork",
+				"github.com/ghetoblues/nts-desktop",
+			].join("\n"),
+		})
+	}
+
 	openAbout() {
+		app.showAboutPanel()
+	}
+
+	openSource() {
 		shell.openExternal("https://github.com/romeovs/nts-desktop")
 	}
 
@@ -348,6 +375,10 @@ async function makeMenu(application: NTSApplication): Promise<Menu> {
 		{
 			label: "About NTS Desktop",
 			click: () => application.openAbout(),
+		},
+		{
+			label: "Source Code...",
+			click: () => application.openSource(),
 		},
 		{
 			label: "Show NTS Desktop",

@@ -6,6 +6,12 @@
 
 An unofficial desktop app for NTS built in Electron.
 
+> **This is a fork** of [romeovs/nts-desktop](https://github.com/romeovs/nts-desktop)
+> by Romeo Van Snick, MIT licensed, kept under the same licence. It restores live
+> playback after NTS moved its streams, adds Apple Music links in the tracklist
+> and NTS favourites in the window, and drops the buttons that led out of the
+> app. Not affiliated with or endorsed by NTS Radio.
+
 ## Usage
 
 - Click the NTS logo in the menubar to open the player.
