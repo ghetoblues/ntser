@@ -91,6 +91,13 @@ export class NTSApplication {
 
 		setTimeout(() => app.dock.hide(), 1500)
 		await this.loadClient()
+
+		// The show screen is otherwise only reachable by dropping a link onto the
+		// tray icon, which is awkward to do over and over while working on it.
+		const url = process.env.NTS_OPEN_SHOW
+		if (!this.production && url) {
+			this.window.webContents.once("did-finish-load", () => this.openURL(url))
+		}
 	}
 
 	login() {
