@@ -1,7 +1,8 @@
 import classnames from "classnames"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import css from "./about.module.css"
 import { electron } from "./electron"
+import { useSwipe } from "./lib/use-swipe"
 import { Logo } from "./logo"
 
 const SOURCE = "https://github.com/romeovs/nts-desktop"
@@ -16,6 +17,11 @@ export function About(props: Props) {
 	const { hide, onHide } = props
 
 	const [version, setVersion] = useState("")
+
+	// The panel covers the whole window, so a sideways swipe is the natural way
+	// back out of it - the same gesture that moves between the screens beneath.
+	const ref = useRef<HTMLDivElement>(null)
+	useSwipe(ref, onHide, !hide)
 
 	useEffect(function () {
 		electron
@@ -32,6 +38,7 @@ export function About(props: Props) {
 
 	return (
 		<div
+			ref={ref}
 			className={classnames(css.about, hide && css.hide)}
 			onClick={onHide}
 			aria-hidden={hide}
