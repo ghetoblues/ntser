@@ -29,7 +29,7 @@ export function Schedule(props: Props) {
 				{channels.map(function ([channel, shows]) {
 					return (
 						<div key={channel} className={css.column}>
-							<div className={css.channel}>{channel}</div>
+							<div className={css.channel}>Channel {channel}</div>
 							{shows.length === 0 && <div className={css.empty}>—</div>}
 							<ul className={css.list}>
 								{shows.map(function (show) {

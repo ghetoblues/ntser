@@ -52,13 +52,18 @@
 	}
 }
 
+/* Sticky does not change paint order, and this sits before the list in the
+   markup, so without a stacking order the rows scroll over it rather than
+   under. */
 .channel {
 	position: sticky;
 	top: 0;
+	z-index: 1;
 	background: black;
 	font-weight: 900;
-	font-size: 0.75rem;
-	padding-bottom: 0.2rem;
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	padding: 0.1rem 0 0.35rem 0;
 }
 
 .list {
