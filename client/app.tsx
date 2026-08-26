@@ -15,6 +15,7 @@ import { useOffline } from "./lib/use-offline"
 import { useMetadata } from "./metadata"
 
 import type { ShowInfo } from "../app/show"
+import { About } from "./about"
 import { Arrow } from "./arrow"
 import { Channel as ChannelCard } from "./channel"
 import { Favourite } from "./favourite"
@@ -70,6 +71,7 @@ export function NTS() {
 	const [playing, setPlaying] = useState<Channel | null>(null)
 	const [isOpen, setIsOpen] = useState(document.hasFocus())
 	const [isShowingHelp, setIsShowingHelp] = useState(false)
+	const [isShowingAbout, setIsShowingAbout] = useState(false)
 	const [duration, setDuration] = useState(0)
 	const [position, setPosition] = useState(0)
 	const [looped, setLooped] = useState(0)
@@ -134,9 +136,23 @@ export function NTS() {
 		[position],
 	)
 
-	const close = useCallback(function () {
-		electron.send("close")
-	}, [])
+	const close = useCallback(
+		function () {
+			// Escape backs out of whatever is on top before it closes the window.
+			if (isShowingAbout) {
+				setIsShowingAbout(false)
+				return
+			}
+
+			if (isShowingHelp) {
+				setIsShowingHelp(false)
+				return
+			}
+
+			electron.send("close")
+		},
+		[isShowingAbout, isShowingHelp],
+	)
 
 	useEffect(
 		function () {
@@ -163,7 +179,7 @@ export function NTS() {
 	useKeydown("ArrowLeft", prev)
 	useKeydown("?", () => setIsShowingHelp((x) => !x))
 	useKeydown(" ", togglePlaying, [playing, index])
-	useKeydown("Escape", close)
+	useKeydown("Escape", close, [isShowingAbout, isShowingHelp])
 	useKeydown("t", () => electron.send("tracklist", indexToChannel[index]), [index])
 	useKeydown("1", () => setPlaying(playing === 1 ? null : 1), [playing])
 	useKeydown("2", () => setPlaying(playing === 2 ? null : 2), [playing])
@@ -171,6 +187,8 @@ export function NTS() {
 	useKeydown("-", decreaseVolume)
 	useKeydown("ArrowUp", increaseVolume)
 	useKeydown("ArrowDown", decreaseVolume)
+
+	useEvent("about", () => setIsShowingAbout(true))
 
 	useEvent("open-show", async function (show: ShowInfo) {
 		setShow(show)
@@ -333,6 +351,7 @@ export function NTS() {
 			)}
 			<Offline hide={!isOffline} />
 			<Help hide={!isShowingHelp} onHide={() => setIsShowingHelp(false)} />
+			<About hide={!isShowingAbout} onHide={() => setIsShowingAbout(false)} />
 			<Volume volume={preferences.volume} />
 		</>
 	)

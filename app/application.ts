@@ -98,6 +98,12 @@ export class NTSApplication {
 		ipcMain.on("open-show-url", (_evt: IpcMainEvent, url: string) =>
 			this.openURL(url),
 		)
+		ipcMain.handle("version", () => app.getVersion())
+		ipcMain.on("open-link", (_evt: IpcMainEvent, url: string) => {
+			if (url.startsWith("https://")) {
+				shell.openExternal(url)
+			}
+		})
 		ipcMain.on("my-nts", () => this.openMyNTS())
 		ipcMain.on("explore", () => this.openExplore())
 		ipcMain.on("playing", this.handlePlaying.bind(this))
@@ -115,7 +121,6 @@ export class NTSApplication {
 		globalShortcut.register("Control+N", () => this.toggle())
 
 		setTimeout(() => app.dock.hide(), 1500)
-		this.setupAbout()
 		await this.loadClient()
 
 		// The show screen is otherwise only reachable by dropping a link onto the
@@ -264,34 +269,11 @@ export class NTSApplication {
 		notification.show()
 	}
 
-	// This is a fork, so the panel names who wrote the app, what this build
-	// changed, and under which licence - the LICENSE file travels with the app,
-	// but nobody reads a file they cannot see.
-	setupAbout() {
-		app.setAboutPanelOptions({
-			applicationName: "NTS Desktop",
-			applicationVersion: app.getVersion(),
-			copyright: [
-				"Copyright © 2022 Romeo Van Snick. MIT licensed.",
-				"",
-				"An unofficial player, not affiliated with or endorsed by NTS Radio.",
-			].join("\n"),
-			credits: [
-				"Original app by Romeo Van Snick",
-				"github.com/romeovs/nts-desktop",
-				"",
-				"This build is a modified fork",
-				"github.com/ghetoblues/nts-desktop",
-			].join("\n"),
-		})
-	}
-
+	// A fork should say so, and the native macOS panel cannot: it takes its icon
+	// from the app bundle, renders links as dead text and offers no layout.
 	openAbout() {
-		app.showAboutPanel()
-	}
-
-	openSource() {
-		shell.openExternal("https://github.com/romeovs/nts-desktop")
+		this.window.webContents.send("about")
+		this.open()
 	}
 
 	openTracklist(channel: number | string) {
@@ -375,10 +357,6 @@ async function makeMenu(application: NTSApplication): Promise<Menu> {
 		{
 			label: "About NTS Desktop",
 			click: () => application.openAbout(),
-		},
-		{
-			label: "Source Code...",
-			click: () => application.openSource(),
 		},
 		{
 			label: "Show NTS Desktop",
