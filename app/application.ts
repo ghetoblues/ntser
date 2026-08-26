@@ -241,7 +241,7 @@ export class NTSApplication {
 
 	async openFile(filename: string) {
 		if (!filename.endsWith(".webloc")) {
-			this.evts.emit("error", "NTS Desktop can only open .webloc files")
+			this.evts.emit("error", "NTSer can only open .webloc files")
 			return
 		}
 
@@ -353,11 +353,11 @@ async function makeMenu(application: NTSApplication): Promise<Menu> {
 
 	return Menu.buildFromTemplate([
 		{
-			label: "About NTS Desktop",
+			label: "About NTSer",
 			click: () => application.openAbout(),
 		},
 		{
-			label: "Show NTS Desktop",
+			label: "Show NTSer",
 			accelerator: "Control+N",
 			acceleratorWorksWhenHidden: true,
 			click: () => application.open(),
@@ -397,9 +397,9 @@ async function makeMenu(application: NTSApplication): Promise<Menu> {
 				},
 		{ type: "separator" },
 		{
-			label: "Reload NTS Desktop",
+			label: "Reload NTSer",
 			click: () => application.reload(),
 		},
-		{ label: "Quit NTS Desktop", role: "quit" },
+		{ label: "Quit NTSer", role: "quit" },
 	])
 }

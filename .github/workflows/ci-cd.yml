@@ -165,7 +165,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: bundle/NTS Desktop-*.dmg
+          files: bundle/NTSer-*.dmg
           generate_release_notes: true
           fail_on_unmatched_files: true
         env:

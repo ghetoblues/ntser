@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [0.4.0]
 
-First release of the [ghetoblues](https://github.com/ghetoblues/nts-desktop)
+First release of the [ghetoblues](https://github.com/ghetoblues/ntser)
 fork.
 
 ## Fixed

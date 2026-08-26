@@ -37,7 +37,7 @@ function document(fav: Favourite, uid: string): DocumentData {
 			ga_client_id: null,
 			firebase_user_uid: uid,
 			installation_id: null,
-			user_agent: "NTS Desktop",
+			user_agent: "NTSer",
 			referrer: null,
 			country: null,
 			country_code2: null,

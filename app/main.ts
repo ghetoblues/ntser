@@ -6,7 +6,7 @@ let application = null
 
 async function main() {
 	const production = __dirname.endsWith(".asar")
-	console.log(`Starting NTS Desktop... (production=${production})`)
+	console.log(`Starting NTSer... (production=${production})`)
 
 	await app.whenReady()
 

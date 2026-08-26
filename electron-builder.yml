@@ -1,5 +1,5 @@
-productName: NTS Desktop
-appId: "org.observepeople.nts"
+productName: NTSer
+appId: "org.observepeople.ntser"
 
 directories:
   app: dist

@@ -7,7 +7,7 @@ import { useSwipe } from "./lib/use-swipe"
 import { Logo } from "./logo"
 
 const SOURCE = "https://github.com/romeovs/nts-desktop"
-const FORK = "https://github.com/ghetoblues/nts-desktop"
+const FORK = "https://github.com/ghetoblues/ntser"
 
 type Props = {
 	hide: boolean
@@ -56,7 +56,7 @@ export function About(props: Props) {
 
 			<div className={css.inner}>
 				<Logo className={css.logo} />
-				<div className={css.name}>NTS Desktop</div>
+				<div className={css.name}>NTSer</div>
 				{version && <div className={css.version}>Version {version}</div>}
 
 				<p className={css.blurb}>Unofficial player, not affiliated with NTS.</p>
@@ -81,7 +81,7 @@ export function About(props: Props) {
 						className={css.link}
 						onClick={(evt) => handleLink(evt, FORK)}
 					>
-						ghetoblues/nts-desktop
+						ghetoblues/ntser
 					</button>
 				</p>
 

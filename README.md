@@ -1,4 +1,4 @@
-# NTS Desktop
+# NTSer
 
 A menubar player for [NTS Radio](https://www.nts.live) — both live channels and
 the archive. Electron, macOS.
@@ -21,7 +21,7 @@ Van Snick, same MIT licence. Unofficial, not affiliated with NTS.
 
 ## Install
 
-Take the `.dmg` from [releases](https://github.com/ghetoblues/nts-desktop/releases)
+Take the `.dmg` from [releases](https://github.com/ghetoblues/ntser/releases)
 and drag the app to Applications. It is unsigned, so the first launch is refused
 — allow it under `System Settings > Privacy & Security`.
 

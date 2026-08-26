@@ -1,7 +1,7 @@
 {
-	"name": "nts-desktop",
+	"name": "ntser",
 	"version": "0.4.0",
-	"description": "A desktop app for playing NTS Live and archived shows",
+	"description": "A menubar player for NTS Radio",
 	"type": "module",
 	"main": "index.cjs",
 	"author": "Romeo Van Snick <romeo@romeovansnick.be>",
@@ -9,7 +9,7 @@
 		"ghetoblues (https://github.com/ghetoblues)"
 	],
 	"license": "MIT",
-	"repository": "https://github.com/ghetoblues/nts-desktop",
+	"repository": "https://github.com/ghetoblues/ntser",
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.10",
 		"@types/node": "^26.3.0",
