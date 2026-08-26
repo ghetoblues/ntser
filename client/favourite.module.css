@@ -1,7 +1,4 @@
 .favourite {
-	position: absolute;
-	top: 10px;
-	right: 10px;
 	color: white;
 	background: none;
 	border: none;
@@ -10,12 +7,22 @@
 	opacity: 0.5;
 	transition: opacity 300ms;
 	cursor: pointer;
-	z-index: 51;
 	width: 30px;
 	height: 30px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.corner {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.inline {
+	position: relative;
+	align-self: center;
 }
 
 .favourite:hover {

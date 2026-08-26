@@ -8,11 +8,12 @@ import { notify } from "./notifications"
 type Props = {
 	show: string
 	episode: string
-	className?: string
+	// Sits in the corner by default; inline puts it in a row of its own.
+	inline?: boolean
 }
 
 export function Favourite(props: Props) {
-	const { show, episode, className } = props
+	const { show, episode, inline } = props
 
 	const [saved, setSaved] = useState(false)
 	const [busy, setBusy] = useState(false)
@@ -73,7 +74,11 @@ export function Favourite(props: Props) {
 	return (
 		<button
 			type="button"
-			className={classnames(css.favourite, saved && css.saved, className)}
+			className={classnames(
+				css.favourite,
+				inline ? css.inline : css.corner,
+				saved && css.saved,
+			)}
 			onClick={handleClick}
 			disabled={!show}
 			title={saved ? "Remove from NTS favourites" : "Save to NTS favourites"}

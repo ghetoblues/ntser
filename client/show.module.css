@@ -59,10 +59,19 @@
 
 /* The transport controls live below the fold, so the header doubles as the
    play/pause button - the same affordance the live channels have. */
-.header {
+/* The header and the heart share a row: one acts on playback, the other on the
+   show, and the corner is left to navigation alone. */
+.controls {
 	position: absolute;
 	top: 0.5rem;
 	left: 0.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	z-index: 10;
+}
+
+.header {
 	display: flex;
 	align-items: center;
 	background: black;

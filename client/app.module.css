@@ -68,8 +68,3 @@
 		width: 12px;
 	}
 }
-
-/* Shares the corner with the back arrow on the archive screen. */
-.favouriteOnShow {
-	right: 40px;
-}

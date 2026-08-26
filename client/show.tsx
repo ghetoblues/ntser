@@ -4,6 +4,7 @@ import { useCallback } from "react"
 import type { ShowInfo } from "~/app/show"
 
 import { Controls, formatDuration } from "./controls"
+import { Favourite } from "./favourite"
 import { Favourites } from "./favourites"
 import { PlayButton } from "./play"
 import css from "./show.module.css"
@@ -45,19 +46,22 @@ export function Show(props: Props) {
 		<div className={css.show} data-show="true">
 			<div className={css.top}>
 				<img src={image} className={css.image} draggable={false} alt="" />
-				<button
-					type="button"
-					className={classnames(css.header, playing && css.playing)}
-					onClick={handleToggle}
-				>
-					<span className={css.badge}>
-						<PlayButton playing={playing} className={css.play} />
-					</span>
-					<span>
-						<span className={css.was}>Was Live</span>
-						<span className={css.date}>{formatDate(date)}</span>
-					</span>
-				</button>
+				<div className={css.controls}>
+					<button
+						type="button"
+						className={classnames(css.header, playing && css.playing)}
+						onClick={handleToggle}
+					>
+						<span className={css.badge}>
+							<PlayButton playing={playing} className={css.play} />
+						</span>
+						<span>
+							<span className={css.was}>Was Live</span>
+							<span className={css.date}>{formatDate(date)}</span>
+						</span>
+					</button>
+					<Favourite show={show.show} episode={show.episode} inline />
+				</div>
 				<div className={css.footer}>
 					<div className={css.location}>{location}</div>
 					<br />

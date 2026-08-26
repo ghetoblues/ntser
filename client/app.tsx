@@ -316,13 +316,6 @@ export function NTS() {
 				<Favourite show={liveShow?.show ?? ""} episode={liveShow?.episode ?? ""} />
 			)}
 			{indexToSlide[index] === "show" && show && !browsing && (
-				<Favourite
-					show={show.show}
-					episode={show.episode}
-					className={css.favouriteOnShow}
-				/>
-			)}
-			{indexToSlide[index] === "show" && show && !browsing && (
 				<button
 					type="button"
 					className={css.back}

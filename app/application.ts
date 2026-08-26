@@ -49,7 +49,6 @@ export class NTSApplication {
 		this.production = production
 		this.liveTracks = new NTSLiveTracks(this.window.webContents)
 		reminders.attach(this.window.webContents)
-		reminders.restore()
 	}
 
 	async init() {
@@ -132,6 +131,11 @@ export class NTSApplication {
 		globalShortcut.register("Control+N", () => this.toggle())
 
 		setTimeout(() => app.dock?.hide(), 1500)
+
+		// Before the client, so the schedule does not ask which shows are marked
+		// while the stored ones are still being read back.
+		await reminders.restore()
+
 		await this.loadClient()
 
 		// The show screen is otherwise only reachable by dropping a link onto the
