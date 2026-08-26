@@ -1,6 +1,11 @@
 productName: NTSer
 appId: "org.observepeople.ntser"
 
+# Seals the bundle with an ad-hoc signature once electron-builder has skipped
+# signing; see the script for why an unsealed bundle is worse than an unsigned
+# one.
+afterPack: scripts/adhoc-sign.mjs
+
 directories:
   app: dist
   output: bundle
