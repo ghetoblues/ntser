@@ -10,6 +10,7 @@ import { Arrow } from "./arrow"
 import { Channel as ChannelCard } from "./channel"
 import { electron } from "./electron"
 import { Favourite } from "./favourite"
+import { Favourites } from "./favourites"
 import { Help } from "./help"
 import { useLiveInfo } from "./lib/live"
 import { useLiveTracks } from "./lib/live-tracks"
@@ -28,7 +29,6 @@ import { Show } from "./show"
 import { Slide, Slider } from "./slider"
 import { Soundcloud } from "./soundcloud"
 import { Splash } from "./splash"
-import { Tracklist } from "./tracklist"
 import { Volume } from "./volume"
 
 type Channel = Stream | "show"
@@ -62,6 +62,9 @@ export function App() {
 
 export function NTS() {
 	const [show, setShow] = useState<ShowInfo | null>(null)
+	// The archive slide shows either the loaded show or the favourites list. The
+	// audio elements live outside the slider, so browsing does not stop playback.
+	const [browsing, setBrowsing] = useState(false)
 	const { preferences, updatePreferences } = usePreferences()
 
 	const [index, setIndex] = useState<number>(0)
@@ -86,7 +89,6 @@ export function NTS() {
 
 	const tracks1 = useLiveTracks(1)
 	const tracks2 = useLiveTracks(2)
-	const currentTracks = playing === 1 ? tracks1 : tracks2
 
 	// Whatever is on air on the channel being looked at, which is what the
 	// favourite button acts on.
@@ -196,6 +198,7 @@ export function NTS() {
 
 	useEvent("open-show", async function (show: ShowInfo) {
 		setShow(show)
+		setBrowsing(false)
 		setPlaying("show")
 		setIndex(channelToIndex.show)
 		setPosition(0)
@@ -230,16 +233,6 @@ export function NTS() {
 		},
 		[isOffline, stopAll],
 	)
-
-	const handleShowTracklist = useCallback(function () {
-		const all = document.querySelectorAll("[data-show]")
-		for (const el of all) {
-			el.scrollTo({
-				top: 220,
-				behavior: "smooth",
-			})
-		}
-	}, [])
 
 	const handleShowPlay = useCallback(function () {
 		setPlaying("show")
@@ -285,15 +278,19 @@ export function NTS() {
 					/>
 				</Slide>
 				<Slide>
-					<Show
-						show={show}
-						onPlay={() => setPlaying("show")}
-						onStop={stopAll}
-						onSeek={seek}
-						playing={playing === "show"}
-						duration={duration}
-						position={position}
-					/>
+					{browsing || !show ? (
+						<Favourites />
+					) : (
+						<Show
+							show={show}
+							onPlay={() => setPlaying("show")}
+							onStop={stopAll}
+							onSeek={seek}
+							playing={playing === "show"}
+							duration={duration}
+							position={position}
+						/>
+					)}
 				</Slide>
 			</Slider>
 			<button type="button" onClick={prev} className={css.prev}>
@@ -305,13 +302,15 @@ export function NTS() {
 			{indexToChannel[index] !== "show" && (
 				<Favourite show={liveShow?.show ?? ""} episode={liveShow?.episode ?? ""} />
 			)}
-			{indexToChannel[index] === "show" && (
-				<Tracklist
-					channel="show"
-					hasShow={Boolean(show)}
-					onShowTracklist={handleShowTracklist}
-					hasTracks={currentTracks.length > 0}
-				/>
+			{indexToChannel[index] === "show" && show && !browsing && (
+				<button
+					type="button"
+					className={css.back}
+					onClick={() => setBrowsing(true)}
+					title="Back to favourites"
+				>
+					<Arrow direction="left" />
+				</button>
 			)}
 			<Player
 				src={streams[1]}

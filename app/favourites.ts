@@ -178,8 +178,12 @@ type EpisodeData = {
 // A favourite names a show, not an episode, so the episodes have to be looked
 // up separately - the most recent one to label the entry, more of them when
 // someone wants to pick.
-export async function episodes(show: string, count: number): Promise<Episode[]> {
-	const url = `https://www.nts.live/api/v2/shows/${encodeURIComponent(show)}/episodes?offset=0&limit=${count}`
+export async function episodes(
+	show: string,
+	offset: number,
+	count: number,
+): Promise<Episode[]> {
+	const url = `https://www.nts.live/api/v2/shows/${encodeURIComponent(show)}/episodes?offset=${offset}&limit=${count}`
 
 	const resp = await fetch(url, { signal: AbortSignal.timeout(10000) })
 	if (!resp.ok) {
@@ -202,6 +206,6 @@ export async function episodes(show: string, count: number): Promise<Episode[]> 
 }
 
 async function latest(show: string): Promise<Episode | null> {
-	const [episode] = await episodes(show, 1)
+	const [episode] = await episodes(show, 0, 1)
 	return episode ?? null
 }

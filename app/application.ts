@@ -26,6 +26,10 @@ import * as favourites from "./favourites"
 import * as history from "./history"
 import { NTSLiveTracks } from "./live-tracks"
 import * as preferences from "./preferences"
+
+// How many episodes of a show to fetch at a time as the list is scrolled.
+const PAGE = 10
+
 import { show } from "./show"
 
 const loadURL = serve({ directory: "client" })
@@ -93,8 +97,10 @@ export class NTSApplication {
 			}
 			return favourites.list()
 		})
-		ipcMain.handle("episodes", (_evt: IpcMainInvokeEvent, show: string) =>
-			favourites.episodes(show, 5),
+		ipcMain.handle(
+			"episodes",
+			(_evt: IpcMainInvokeEvent, show: string, offset: number) =>
+				favourites.episodes(show, offset, PAGE),
 		)
 		ipcMain.on("open-show-url", (_evt: IpcMainEvent, url: string) =>
 			this.openURL(url),

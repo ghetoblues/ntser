@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 import { electron } from "./electron"
 import css from "./favourites.module.css"
@@ -51,19 +51,56 @@ export function Favourites() {
 	useEvent("open", load)
 
 	// A favourite is a show, and its latest episode is only the likeliest guess at
-	// which one you want, so opening one offers its recent episodes by date.
+	// which one you want, so opening one lists its episodes by date - a page at a
+	// time, since a long-running show has hundreds.
 	const [picking, setPicking] = useState<Episode | null>(null)
 	const [episodes, setEpisodes] = useState<Episode[] | null>(null)
+	const [more, setMore] = useState(true)
+	const loading = useRef(false)
 
-	const handlePick = useCallback(function (episode: Episode) {
-		setPicking(episode)
-		setEpisodes(null)
+	const page = useCallback(async function (show: string, offset: number) {
+		if (loading.current) {
+			return
+		}
 
-		electron
-			.invoke("episodes", episode.show)
-			.then(setEpisodes)
-			.catch(() => setEpisodes([episode]))
+		loading.current = true
+		try {
+			const next: Episode[] = await electron.invoke("episodes", show, offset)
+			setEpisodes((current) => [...(current ?? []), ...next])
+			setMore(next.length > 0)
+		} catch {
+			setMore(false)
+		} finally {
+			loading.current = false
+		}
 	}, [])
+
+	const handlePick = useCallback(
+		function (episode: Episode) {
+			setPicking(episode)
+			setEpisodes(null)
+			setMore(true)
+			page(episode.show, 0)
+		},
+		[page],
+	)
+
+	// Reaching the end of the list asks for the next page.
+	const handleScroll = useCallback(
+		function (evt: React.UIEvent<HTMLUListElement>) {
+			if (!picking || !more) {
+				return
+			}
+
+			const el = evt.currentTarget
+			if (el.scrollHeight - el.scrollTop - el.clientHeight > 80) {
+				return
+			}
+
+			page(picking.show, episodes?.length ?? 0)
+		},
+		[picking, more, episodes, page],
+	)
 
 	const handleOpen = useCallback(function (url: string) {
 		electron.send("open-show-url", url)
@@ -94,7 +131,7 @@ export function Favourites() {
 				</button>
 				{!episodes && <div className={css.notice}>Loading episodes…</div>}
 				{episodes && (
-					<ul className={css.list}>
+					<ul className={css.list} onScroll={handleScroll}>
 						{episodes.map(function (episode) {
 							return (
 								<li key={episode.episode} className={css.item}>
