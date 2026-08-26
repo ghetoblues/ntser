@@ -101,8 +101,6 @@ jobs:
         run: pnpm version --no-git-tag-version --new-version "${GITHUB_REF:11}"
       - name: Build renderer
         run: make build packages
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
       - name: Upload dist
         uses: actions/upload-artifact@v4
         with:
@@ -165,7 +163,7 @@ jobs:
           name: bundle
           path: bundle
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: bundle/NTS Desktop-*.dmg
           generate_release_notes: true
