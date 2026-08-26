@@ -4,6 +4,7 @@ import bplist from "bplist-parser"
 import {
 	BrowserWindow,
 	type IpcMainEvent,
+	type IpcMainInvokeEvent,
 	Menu,
 	type NativeImage,
 	Notification,
@@ -17,6 +18,7 @@ import {
 } from "electron"
 import serve from "electron-serve"
 
+import * as appleMusic from "./apple-music"
 import * as credentials from "./credentials"
 import * as history from "./history"
 import { NTSLiveTracks } from "./live-tracks"
@@ -63,6 +65,10 @@ export class NTSApplication {
 		ipcMain.on("close", () => this.close())
 		ipcMain.on("tracklist", (_evt: IpcMainEvent, channel: number | string) =>
 			this.openTracklist(channel),
+		)
+		ipcMain.handle(
+			"apple-music",
+			(_evt: IpcMainInvokeEvent, track: appleMusic.Track) => appleMusic.open(track),
 		)
 		ipcMain.on("my-nts", () => this.openMyNTS())
 		ipcMain.on("explore", () => this.openExplore())
