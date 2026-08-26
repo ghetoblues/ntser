@@ -6,6 +6,11 @@ directories:
   output: bundle
 
 mac:
+  # Signing needs a paid Developer ID. Without one, electron-builder would reach
+  # for whatever certificate happens to be in the keychain - a Development one
+  # signs nothing anyone else can run, and fails outright when Apple's timestamp
+  # service is unreachable. Ship it unsigned and say so in the README.
+  identity: null
   icon: app/icon.icns
   category: public.app-category.music
   target:
