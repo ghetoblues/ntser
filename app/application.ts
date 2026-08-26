@@ -49,6 +49,7 @@ export class NTSApplication {
 		this.production = production
 		this.liveTracks = new NTSLiveTracks(this.window.webContents)
 		reminders.attach(this.window.webContents)
+		reminders.restore()
 	}
 
 	async init() {

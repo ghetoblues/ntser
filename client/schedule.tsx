@@ -97,29 +97,17 @@ function Entry(props: EntryProps) {
 				<span className={css.time}>{formatTime(show.starts)}</span>
 				<span className={css.name}>{show.name}</span>
 			</span>
-			{isToday(show.starts) && (
-				<button
-					type="button"
-					className={classnames(css.notify, marked && css.marked)}
-					onClick={handleClick}
-					title={marked ? "Cancel reminder" : "Notify me when this starts"}
-				>
-					<svg aria-hidden="true" viewBox="0 0 24 24">
-						<path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6V11a6 6 0 00-5-5.91V4a1 1 0 00-2 0v1.09A6 6 0 006 11v5l-2 2v1h16v-1l-2-2z" />
-					</svg>
-				</button>
-			)}
+			<button
+				type="button"
+				className={classnames(css.notify, marked && css.marked)}
+				onClick={handleClick}
+				title={marked ? "Cancel reminder" : "Notify me when this starts"}
+			>
+				<svg aria-hidden="true" viewBox="0 0 24 24">
+					<path d="M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6V11a6 6 0 00-5-5.91V4a1 1 0 00-2 0v1.09A6 6 0 006 11v5l-2 2v1h16v-1l-2-2z" />
+				</svg>
+			</button>
 		</li>
-	)
-}
-
-// Reminders are timers in a running process, so they only make sense for today.
-function isToday(date: Date): boolean {
-	const now = new Date()
-	return (
-		date.getFullYear() === now.getFullYear() &&
-		date.getMonth() === now.getMonth() &&
-		date.getDate() === now.getDate()
 	)
 }
 
@@ -127,6 +115,24 @@ function strip(message: string): string {
 	return message.replace(/^Error invoking remote method '[^']+': Error: /, "")
 }
 
+// The schedule runs past midnight, so anything that is not today says which day
+// it is rather than leaving a bare time to be misread.
 function formatTime(date: Date): string {
-	return date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+	const time = date.toLocaleTimeString("en-GB", {
+		hour: "2-digit",
+		minute: "2-digit",
+	})
+
+	const now = new Date()
+	const sameDay =
+		date.getFullYear() === now.getFullYear() &&
+		date.getMonth() === now.getMonth() &&
+		date.getDate() === now.getDate()
+
+	if (sameDay) {
+		return time
+	}
+
+	const day = date.toLocaleDateString("en-GB", { weekday: "short" })
+	return `${day} ${time}`
 }
