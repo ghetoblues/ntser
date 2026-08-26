@@ -73,9 +73,6 @@ export class NTSApplication {
 		ipcMain.on("my-nts", () => this.openMyNTS())
 		ipcMain.on("explore", () => this.openExplore())
 		ipcMain.on("playing", this.handlePlaying.bind(this))
-		ipcMain.on("chat", (_evt: IpcMainEvent, channel: number) =>
-			this.openChat(channel),
-		)
 		ipcMain.on("preferences", (_evt: IpcMainEvent, prefs: preferences.Preferences) =>
 			this.storePreferences(prefs),
 		)
@@ -252,18 +249,6 @@ export class NTSApplication {
 
 	openExplore() {
 		shell.openExternal("https://www.nts.live/explore")
-	}
-
-	openChat(channel: number) {
-		if (channel === 1) {
-			shell.openExternal(
-				"https://discord.com/channels/909834111592591421/933364043459227708",
-			)
-		} else {
-			shell.openExternal(
-				"https://discord.com/channels/909834111592591421/935528991501209600",
-			)
-		}
 	}
 
 	openSchedule() {

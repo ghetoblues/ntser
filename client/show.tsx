@@ -1,9 +1,11 @@
+import classnames from "classnames"
 import { useCallback } from "react"
 
 import type { ShowInfo } from "~/app/show"
 
 import { Controls, formatDuration } from "./controls"
 import { electron } from "./electron"
+import { PlayButton } from "./play"
 import { Tracklist } from "./tracklist/index"
 
 import css from "./show.module.css"
@@ -27,6 +29,17 @@ export function Show(props: Props) {
 	const handleExploreClick = useCallback(function () {
 		electron.send("explore")
 	}, [])
+
+	const handleToggle = useCallback(
+		function () {
+			if (playing) {
+				onStop()
+			} else {
+				onPlay()
+			}
+		},
+		[playing, onPlay, onStop],
+	)
 
 	if (!show) {
 		return (
@@ -55,9 +68,19 @@ export function Show(props: Props) {
 		<div className={css.show} data-show="true">
 			<div className={css.top}>
 				<img src={image} className={css.image} draggable={false} />
-				<div className={css.header}>
-					<div className={css.date}>{formatDate(date)}</div>
-				</div>
+				<button
+					type="button"
+					className={classnames(css.header, playing && css.playing)}
+					onClick={handleToggle}
+				>
+					<span className={css.badge}>
+						<PlayButton playing={playing} className={css.play} />
+					</span>
+					<span>
+						<span className={css.was}>Was Live</span>
+						<span className={css.date}>{formatDate(date)}</span>
+					</span>
+				</button>
 				<div className={css.footer}>
 					<div className={css.location}>{location}</div>
 					<br />
@@ -69,9 +92,6 @@ export function Show(props: Props) {
 				show={show}
 				duration={duration}
 				position={position}
-				playing={playing}
-				onPlay={onPlay}
-				onStop={onStop}
 				onSeek={onSeek}
 			/>
 			{tracklist.length === 0 && (

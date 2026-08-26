@@ -17,7 +17,6 @@ import { useMetadata } from "./metadata"
 import type { ShowInfo } from "../app/show"
 import { Arrow } from "./arrow"
 import { Channel as ChannelCard } from "./channel"
-import { Chat } from "./chat"
 import { Help } from "./help"
 import { Login } from "./login"
 import { Mixcloud } from "./mixcloud"
@@ -156,7 +155,6 @@ export function NTS() {
 	useKeydown(" ", togglePlaying, [playing, index])
 	useKeydown("Escape", close)
 	useKeydown("t", () => electron.send("tracklist", indexToChannel[index]), [index])
-	useKeydown("c", () => electron.send("chat", indexToChannel[index]), [index])
 	useKeydown("1", () => setPlaying(playing === 1 ? null : 1), [playing])
 	useKeydown("2", () => setPlaying(playing === 2 ? null : 2), [playing])
 	useKeydown("+", increaseVolume)
@@ -272,13 +270,14 @@ export function NTS() {
 			<button type="button" onClick={next} className={css.next}>
 				<Arrow direction="right" />
 			</button>
-			<Tracklist
-				channel={indexToChannel[index]}
-				hasShow={Boolean(show)}
-				onShowTracklist={handleShowTracklist}
-				hasTracks={currentTracks.length > 0}
-			/>
-			<Chat channel={indexToChannel[index]} />
+			{indexToChannel[index] === "show" && (
+				<Tracklist
+					channel="show"
+					hasShow={Boolean(show)}
+					onShowTracklist={handleShowTracklist}
+					hasTracks={currentTracks.length > 0}
+				/>
+			)}
 			<Player
 				src={streams[1]}
 				playing={playing === 1}
