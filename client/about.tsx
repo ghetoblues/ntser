@@ -43,11 +43,7 @@ export function About(props: Props) {
 				<div className={css.name}>NTS Desktop</div>
 				{version && <div className={css.version}>Version {version}</div>}
 
-				<p className={css.blurb}>
-					An unofficial player for NTS Radio.
-					<br />
-					Not affiliated with or endorsed by NTS.
-				</p>
+				<p className={css.blurb}>Unofficial player, not affiliated with NTS.</p>
 
 				<p className={css.credit}>
 					Original app by Romeo Van Snick
@@ -57,23 +53,23 @@ export function About(props: Props) {
 						className={css.link}
 						onClick={(evt) => handleLink(evt, SOURCE)}
 					>
-						github.com/romeovs/nts-desktop
+						romeovs/nts-desktop
 					</button>
 				</p>
 
 				<p className={css.credit}>
-					This build is a modified fork
+					Modified fork
 					<br />
 					<button
 						type="button"
 						className={css.link}
 						onClick={(evt) => handleLink(evt, FORK)}
 					>
-						github.com/ghetoblues/nts-desktop
+						ghetoblues/nts-desktop
 					</button>
 				</p>
 
-				<div className={css.licence}>MIT licensed · © 2022 Romeo Van Snick</div>
+				<div className={css.licence}>MIT · © 2022 Romeo Van Snick</div>
 			</div>
 		</div>
 	)

@@ -20,6 +20,7 @@ import { Arrow } from "./arrow"
 import { Channel as ChannelCard } from "./channel"
 import { Favourite } from "./favourite"
 import { Help } from "./help"
+import { LoadShow } from "./load-show"
 import { Login } from "./login"
 import { Mixcloud } from "./mixcloud"
 import { Notifications } from "./notifications"
@@ -72,6 +73,7 @@ export function NTS() {
 	const [isOpen, setIsOpen] = useState(document.hasFocus())
 	const [isShowingHelp, setIsShowingHelp] = useState(false)
 	const [isShowingAbout, setIsShowingAbout] = useState(false)
+	const [loadShow, setLoadShow] = useState<string | null>(null)
 	const [duration, setDuration] = useState(0)
 	const [position, setPosition] = useState(0)
 	const [looped, setLooped] = useState(0)
@@ -149,9 +151,14 @@ export function NTS() {
 				return
 			}
 
+			if (loadShow !== null) {
+				setLoadShow(null)
+				return
+			}
+
 			electron.send("close")
 		},
-		[isShowingAbout, isShowingHelp],
+		[isShowingAbout, isShowingHelp, loadShow],
 	)
 
 	useEffect(
@@ -179,7 +186,7 @@ export function NTS() {
 	useKeydown("ArrowLeft", prev)
 	useKeydown("?", () => setIsShowingHelp((x) => !x))
 	useKeydown(" ", togglePlaying, [playing, index])
-	useKeydown("Escape", close, [isShowingAbout, isShowingHelp])
+	useKeydown("Escape", close, [isShowingAbout, isShowingHelp, loadShow])
 	useKeydown("t", () => electron.send("tracklist", indexToChannel[index]), [index])
 	useKeydown("1", () => setPlaying(playing === 1 ? null : 1), [playing])
 	useKeydown("2", () => setPlaying(playing === 2 ? null : 2), [playing])
@@ -189,6 +196,7 @@ export function NTS() {
 	useKeydown("ArrowDown", decreaseVolume)
 
 	useEvent("about", () => setIsShowingAbout(true))
+	useEvent("load-show", (suggestion: string) => setLoadShow(suggestion))
 
 	useEvent("open-show", async function (show: ShowInfo) {
 		setShow(show)
@@ -352,6 +360,11 @@ export function NTS() {
 			<Offline hide={!isOffline} />
 			<Help hide={!isShowingHelp} onHide={() => setIsShowingHelp(false)} />
 			<About hide={!isShowingAbout} onHide={() => setIsShowingAbout(false)} />
+			<LoadShow
+				show={loadShow !== null}
+				suggestion={loadShow ?? ""}
+				onClose={() => setLoadShow(null)}
+			/>
 			<Volume volume={preferences.volume} />
 		</>
 	)

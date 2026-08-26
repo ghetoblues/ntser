@@ -13,9 +13,9 @@
 	align-items: center;
 	justify-content: center;
 
-	padding: 1rem;
+	padding: 0.75rem;
 	box-sizing: border-box;
-	overflow-y: auto;
+	overflow: hidden;
 
 	z-index: 1002;
 	cursor: default;
@@ -28,21 +28,21 @@
 
 .inner {
 	text-align: center;
-	max-width: 20rem;
+	max-width: 100%;
 }
 
 .logo {
-	width: 44px;
-	height: 44px;
+	width: 30px;
+	height: 30px;
 	display: block;
-	margin: 0 auto 0.6rem auto;
+	margin: 0 auto 0.4rem auto;
 }
 
 .name {
 	font-weight: bold;
 	text-transform: uppercase;
-	font-size: 0.95rem;
-	line-height: 1.2;
+	font-size: 0.85rem;
+	line-height: 1.15;
 }
 
 .version {
@@ -52,16 +52,16 @@
 }
 
 .blurb {
-	font-size: 0.75rem;
-	line-height: 1.5;
-	margin: 1.1rem 0 0 0;
+	font-size: 0.7rem;
+	line-height: 1.4;
+	margin: 0.7rem 0 0 0;
 	opacity: 0.75;
 }
 
 .credit {
-	font-size: 0.75rem;
-	line-height: 1.5;
-	margin: 1rem 0 0 0;
+	font-size: 0.7rem;
+	line-height: 1.45;
+	margin: 0.6rem 0 0 0;
 }
 
 .link {
@@ -85,7 +85,7 @@
 }
 
 .licence {
-	font-size: 0.7rem;
-	margin-top: 1.2rem;
+	font-size: 0.65rem;
+	margin-top: 0.7rem;
 	opacity: 0.45;
 }

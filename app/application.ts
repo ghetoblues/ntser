@@ -10,7 +10,7 @@ import {
 	Notification,
 	Tray,
 	app,
-	dialog,
+	clipboard,
 	globalShortcut,
 	ipcMain,
 	nativeImage,
@@ -247,18 +247,15 @@ export class NTSApplication {
 		this.window.webContents.send("open-show", data)
 	}
 
-	async browse() {
-		const { filePaths, canceled } = await dialog.showOpenDialog({
-			message: "Select a link to an archive show",
-			properties: ["openFile"],
-			filters: [{ name: "links", extensions: ["webloc"] }],
-		})
+	// You get here holding a link, not a file: a picker filtered to .webloc was
+	// asking for a shortcut almost nobody has on disk. Offer the clipboard, since
+	// copying the link is how the link gets to you.
+	browse() {
+		const pasted = clipboard.readText().trim()
+		const suggestion = pasted.startsWith("https://www.nts.live/shows/") ? pasted : ""
 
-		if (canceled) {
-			return
-		}
-
-		this.openFile(filePaths[0])
+		this.window.webContents.send("load-show", suggestion)
+		this.open()
 	}
 
 	showNotification(message: string) {
