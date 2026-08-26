@@ -26,6 +26,7 @@ import * as favourites from "./favourites"
 import * as history from "./history"
 import { NTSLiveTracks } from "./live-tracks"
 import * as preferences from "./preferences"
+import * as reminders from "./reminders"
 
 // How many episodes of a show to fetch at a time as the list is scrolled.
 const PAGE = 10
@@ -47,6 +48,7 @@ export class NTSApplication {
 		this.evts = new EventEmitter()
 		this.production = production
 		this.liveTracks = new NTSLiveTracks(this.window.webContents)
+		reminders.attach(this.window.webContents)
 	}
 
 	async init() {
@@ -66,9 +68,6 @@ export class NTSApplication {
 		ipcMain.on("init", this.syncPreferences.bind(this))
 
 		ipcMain.on("close", () => this.close())
-		ipcMain.on("tracklist", (_evt: IpcMainEvent, channel: number | string) =>
-			this.openTracklist(channel),
-		)
 		ipcMain.handle(
 			"apple-music",
 			(_evt: IpcMainInvokeEvent, track: appleMusic.Track) => appleMusic.open(track),
@@ -106,13 +105,17 @@ export class NTSApplication {
 			this.openURL(url),
 		)
 		ipcMain.handle("version", () => app.getVersion())
+		ipcMain.handle("reminders", () => reminders.list())
+		ipcMain.handle(
+			"remind",
+			(_evt: IpcMainInvokeEvent, reminder: reminders.Reminder) =>
+				reminders.toggle(reminder),
+		)
 		ipcMain.on("open-link", (_evt: IpcMainEvent, url: string) => {
 			if (url.startsWith("https://")) {
 				shell.openExternal(url)
 			}
 		})
-		ipcMain.on("my-nts", () => this.openMyNTS())
-		ipcMain.on("explore", () => this.openExplore())
 		ipcMain.on("playing", this.handlePlaying.bind(this))
 		ipcMain.on("preferences", (_evt: IpcMainEvent, prefs: preferences.Preferences) =>
 			this.storePreferences(prefs),
@@ -280,24 +283,7 @@ export class NTSApplication {
 		this.open()
 	}
 
-	openTracklist(channel: number | string) {
-		shell.openExternal(`https://www.nts.live/live-tracklist/${channel}`)
-	}
-
 	// Both of these used to send you to nts.live. The app can show them itself.
-	openMyNTS() {
-		this.window.webContents.send("favourites")
-		this.open()
-	}
-
-	openExplore() {
-		shell.openExternal("https://www.nts.live/explore")
-	}
-
-	openSchedule() {
-		this.window.webContents.send("schedule")
-		this.open()
-	}
 
 	async storePreferences(prefs: Partial<preferences.Preferences>) {
 		const old = await preferences.read()
@@ -372,14 +358,6 @@ async function makeMenu(application: NTSApplication): Promise<Menu> {
 			click: () => application.open(),
 		},
 		{ type: "separator" },
-		{
-			label: "Open Schedule...",
-			click: () => application.openSchedule(),
-		},
-		{
-			label: "Open Favourites...",
-			click: () => application.openMyNTS(),
-		},
 		{ type: "separator" },
 		{
 			label: "Load Archive Show...",

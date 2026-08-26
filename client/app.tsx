@@ -40,7 +40,10 @@ const channelToIndex: Record<Channel, number> = {
 	show: 2,
 }
 
-const indexToChannel: Channel[] = [1, 2, "show"]
+type SlideName = Channel | "schedule"
+
+const indexToSlide: SlideName[] = [1, 2, "show", "schedule"]
+const SLIDES = indexToSlide.length
 
 export function App() {
 	const [route, setRoute] = useState<"app" | "login">("app")
@@ -66,7 +69,6 @@ export function NTS() {
 	// The archive slide shows either the loaded show or the favourites list. The
 	// audio elements live outside the slider, so browsing does not stop playback.
 	const [browsing, setBrowsing] = useState(false)
-	const [isShowingSchedule, setIsShowingSchedule] = useState(false)
 	const { preferences, updatePreferences } = usePreferences()
 
 	const [index, setIndex] = useState<number>(0)
@@ -102,11 +104,11 @@ export function NTS() {
 				: null
 
 	const next = useCallback(function () {
-		setIndex((idx) => (idx + 1) % 3)
+		setIndex((idx) => (idx + 1) % SLIDES)
 	}, [])
 
 	const prev = useCallback(function () {
-		setIndex((idx) => (3 + idx - 1) % 3)
+		setIndex((idx) => (SLIDES + idx - 1) % SLIDES)
 	}, [])
 
 	const togglePlaying = useCallback(
@@ -115,7 +117,14 @@ export function NTS() {
 				return
 			}
 
-			setPlaying((playing) => (playing ? null : indexToChannel[index]))
+			setPlaying(function (playing) {
+				if (playing) {
+					return null
+				}
+
+				const slide = indexToSlide[index]
+				return slide === "schedule" ? null : slide
+			})
 		},
 		[index, isOffline],
 	)
@@ -146,11 +155,6 @@ export function NTS() {
 				return
 			}
 
-			if (isShowingSchedule) {
-				setIsShowingSchedule(false)
-				return
-			}
-
 			if (isShowingHelp) {
 				setIsShowingHelp(false)
 				return
@@ -163,7 +167,7 @@ export function NTS() {
 
 			electron.send("close")
 		},
-		[isShowingAbout, isShowingSchedule, isShowingHelp, loadShow],
+		[isShowingAbout, isShowingHelp, loadShow],
 	)
 
 	useEffect(
@@ -191,13 +195,7 @@ export function NTS() {
 	useKeydown("ArrowLeft", prev)
 	useKeydown("?", () => setIsShowingHelp((x) => !x))
 	useKeydown(" ", togglePlaying, [playing, index])
-	useKeydown("Escape", close, [
-		isShowingAbout,
-		isShowingSchedule,
-		isShowingHelp,
-		loadShow,
-	])
-	useKeydown("t", () => electron.send("tracklist", indexToChannel[index]), [index])
+	useKeydown("Escape", close, [isShowingAbout, isShowingHelp, loadShow])
 	useKeydown("1", () => setPlaying(playing === 1 ? null : 1), [playing])
 	useKeydown("2", () => setPlaying(playing === 2 ? null : 2), [playing])
 	useKeydown("+", increaseVolume)
@@ -206,12 +204,6 @@ export function NTS() {
 	useKeydown("ArrowDown", decreaseVolume)
 
 	useEvent("about", () => setIsShowingAbout(true))
-	useEvent("schedule", () => setIsShowingSchedule(true))
-	useEvent("favourites", function () {
-		setIsShowingSchedule(false)
-		setBrowsing(true)
-		setIndex(channelToIndex.show)
-	})
 	useEvent("load-show", (suggestion: string) => setLoadShow(suggestion))
 
 	useEvent("open-show", async function (show: ShowInfo) {
@@ -310,6 +302,9 @@ export function NTS() {
 						/>
 					)}
 				</Slide>
+				<Slide>
+					<Schedule live={live} />
+				</Slide>
 			</Slider>
 			<button type="button" onClick={prev} className={css.prev}>
 				<Arrow direction="left" />
@@ -317,10 +312,10 @@ export function NTS() {
 			<button type="button" onClick={next} className={css.next}>
 				<Arrow direction="right" />
 			</button>
-			{indexToChannel[index] !== "show" && (
+			{(indexToSlide[index] === 1 || indexToSlide[index] === 2) && (
 				<Favourite show={liveShow?.show ?? ""} episode={liveShow?.episode ?? ""} />
 			)}
-			{indexToChannel[index] === "show" && show && !browsing && (
+			{indexToSlide[index] === "show" && show && !browsing && (
 				<button
 					type="button"
 					className={css.back}
@@ -373,11 +368,6 @@ export function NTS() {
 			<Offline hide={!isOffline} />
 			<Help hide={!isShowingHelp} onHide={() => setIsShowingHelp(false)} />
 			<About hide={!isShowingAbout} onHide={() => setIsShowingAbout(false)} />
-			<Schedule
-				hide={!isShowingSchedule}
-				live={live}
-				onHide={() => setIsShowingSchedule(false)}
-			/>
 			<LoadShow
 				show={loadShow !== null}
 				suggestion={loadShow ?? ""}
