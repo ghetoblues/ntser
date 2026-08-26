@@ -11,6 +11,8 @@ export type SourceType = "mixcloud" | "soundcloud"
 
 export type ShowInfo = {
 	name: string
+	show: string
+	episode: string
 	date: Date
 	tracklist: Track[]
 	location: string
@@ -23,6 +25,8 @@ export type ShowInfo = {
 
 type Content = {
 	name: string
+	show_alias: string
+	episode_alias: string
 	location_long: string
 	media: {
 		background_large: string
@@ -50,6 +54,8 @@ export async function show(url: string): Promise<ShowInfo> {
 
 	const {
 		name,
+		show_alias,
+		episode_alias,
 		location_long,
 		media: { background_large },
 		audio_sources,
@@ -61,6 +67,8 @@ export async function show(url: string): Promise<ShowInfo> {
 
 	return {
 		name,
+		show: show_alias,
+		episode: episode_alias,
 		location: location_long,
 		image: background_large,
 		date: new Date(broadcast),

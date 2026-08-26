@@ -8,10 +8,11 @@ import { notify } from "./notifications"
 type Props = {
 	show: string
 	episode: string
+	className?: string
 }
 
 export function Favourite(props: Props) {
-	const { show, episode } = props
+	const { show, episode, className } = props
 
 	const [saved, setSaved] = useState(false)
 	const [busy, setBusy] = useState(false)
@@ -72,7 +73,7 @@ export function Favourite(props: Props) {
 	return (
 		<button
 			type="button"
-			className={classnames(css.favourite, saved && css.saved)}
+			className={classnames(css.favourite, saved && css.saved, className)}
 			onClick={handleClick}
 			disabled={!show}
 			title={saved ? "Remove from NTS favourites" : "Save to NTS favourites"}
