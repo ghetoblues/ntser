@@ -72,11 +72,13 @@ export class NTSLiveTracks {
 
 	creds: any | null
 	ready: Promise<boolean> | null
+	subscribing: boolean
 
 	constructor(webContents: WebContents) {
 		this.webContents = webContents
 		this.unsubscribe = null
 		this.ready = null
+		this.subscribing = false
 		this.previous = {
 			stream1: [],
 			stream2: [],
@@ -128,6 +130,22 @@ export class NTSLiveTracks {
 	}
 
 	async subscribe() {
+		// Opening the window subscribes, and the window opens on every tray click
+		// and on activate. Each call used to attach another pair of Firestore
+		// listeners while dropping the handle to the pair before it.
+		if (this.unsubscribe || this.subscribing) {
+			return
+		}
+
+		this.subscribing = true
+		try {
+			await this._subscribe()
+		} finally {
+			this.subscribing = false
+		}
+	}
+
+	async _subscribe() {
 		if (!(await this.ensureAuth())) {
 			return
 		}

@@ -93,6 +93,9 @@ export class NTSApplication {
 			}
 			return favourites.list()
 		})
+		ipcMain.handle("episodes", (_evt: IpcMainInvokeEvent, show: string) =>
+			favourites.episodes(show, 5),
+		)
 		ipcMain.on("open-show-url", (_evt: IpcMainEvent, url: string) =>
 			this.openURL(url),
 		)

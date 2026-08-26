@@ -175,27 +175,33 @@ type EpisodeData = {
 	}
 }
 
-// A favourite names a show, not an episode, so play the most recent one.
-async function latest(show: string): Promise<Episode | null> {
-	const url = `https://www.nts.live/api/v2/shows/${encodeURIComponent(show)}/episodes?offset=0&limit=1`
+// A favourite names a show, not an episode, so the episodes have to be looked
+// up separately - the most recent one to label the entry, more of them when
+// someone wants to pick.
+export async function episodes(show: string, count: number): Promise<Episode[]> {
+	const url = `https://www.nts.live/api/v2/shows/${encodeURIComponent(show)}/episodes?offset=0&limit=${count}`
 
 	const resp = await fetch(url, { signal: AbortSignal.timeout(10000) })
 	if (!resp.ok) {
-		return null
+		return []
 	}
 
 	const content = await resp.json()
-	const episode: EpisodeData | undefined = content.results?.[0]
-	if (!episode) {
-		return null
-	}
+	const results: EpisodeData[] = content.results ?? []
 
-	return {
-		show: episode.show_alias,
-		episode: episode.episode_alias,
-		name: episode.name,
-		image: episode.media.picture_medium_large ?? episode.media.picture_large,
-		date: episode.broadcast,
-		url: `https://www.nts.live/shows/${episode.show_alias}/episodes/${episode.episode_alias}`,
-	}
+	return results.map(function (episode) {
+		return {
+			show: episode.show_alias,
+			episode: episode.episode_alias,
+			name: episode.name,
+			image: episode.media.picture_medium_large ?? episode.media.picture_large,
+			date: episode.broadcast,
+			url: `https://www.nts.live/shows/${episode.show_alias}/episodes/${episode.episode_alias}`,
+		}
+	})
+}
+
+async function latest(show: string): Promise<Episode | null> {
+	const [episode] = await episodes(show, 1)
+	return episode ?? null
 }
