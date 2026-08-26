@@ -77,7 +77,7 @@ export class NTSApplication {
 				if (!(await this.liveTracks.ensureAuth())) {
 					throw new Error("sign in to NTS to save favourites")
 				}
-				await favourites.add(fav)
+				return favourites.toggle(fav)
 			},
 		)
 		ipcMain.handle(
@@ -88,6 +88,15 @@ export class NTSApplication {
 				}
 				return favourites.has(fav)
 			},
+		)
+		ipcMain.handle("favourites", async () => {
+			if (!(await this.liveTracks.ensureAuth())) {
+				throw new Error("sign in to NTS to see your favourites")
+			}
+			return favourites.list()
+		})
+		ipcMain.on("open-show-url", (_evt: IpcMainEvent, url: string) =>
+			this.openURL(url),
 		)
 		ipcMain.on("my-nts", () => this.openMyNTS())
 		ipcMain.on("explore", () => this.openExplore())

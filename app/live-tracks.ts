@@ -95,7 +95,15 @@ export class NTSLiveTracks {
 			this.ready = this._readAndAuth()
 		}
 
-		return this.ready
+		const ok = await this.ready
+		if (!ok) {
+			// Signing in fails for reasons that pass: no network yet at launch, a
+			// timeout, nobody signed in so far. Forget the attempt so the next one
+			// tries again instead of staying broken until the app restarts.
+			this.ready = null
+		}
+
+		return ok
 	}
 
 	async _readAndAuth(): Promise<boolean> {

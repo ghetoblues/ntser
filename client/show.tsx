@@ -4,7 +4,7 @@ import { useCallback } from "react"
 import type { ShowInfo } from "~/app/show"
 
 import { Controls, formatDuration } from "./controls"
-import { electron } from "./electron"
+import { Favourites } from "./favourites"
 import { PlayButton } from "./play"
 import { Tracklist } from "./tracklist/index"
 
@@ -23,13 +23,6 @@ type Props = {
 export function Show(props: Props) {
 	const { show, onPlay, onStop, onSeek, playing, duration, position } = props
 
-	const handleMyNTSClick = useCallback(function () {
-		electron.send("my-nts")
-	}, [])
-	const handleExploreClick = useCallback(function () {
-		electron.send("explore")
-	}, [])
-
 	const handleToggle = useCallback(
 		function () {
 			if (playing) {
@@ -41,25 +34,10 @@ export function Show(props: Props) {
 		[playing, onPlay, onStop],
 	)
 
+	// With nothing loaded, the screen is far more useful as a way into the shows
+	// you saved than as a hint to go and find a link in a browser.
 	if (!show) {
-		return (
-			<div className={css.empty}>
-				<div>
-					<svg viewBox="0 0 24 24">
-						<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
-					</svg>
-					<p>Drop a link on the menu icon to load an episode</p>
-					<div className={css.nav}>
-						<button type="button" onClick={handleMyNTSClick}>
-							My NTS
-						</button>
-						<button type="button" onClick={handleExploreClick}>
-							Explore
-						</button>
-					</div>
-				</div>
-			</div>
-		)
+		return <Favourites />
 	}
 
 	const { image, name, location, date, tracklist } = show
