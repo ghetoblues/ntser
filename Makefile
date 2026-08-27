@@ -18,32 +18,19 @@ help: ## Show this help.
 	@grep '##' $(MAKEFILE_LIST) | grep -v 'grep' | awk -F ': ##' '{ printf("%18s  %s\n", $$1, $$2) }'
 	@echo
 
-bundle: build app
-
-start: ## Start the app, making sure it is build to the latest version
-start: index preload run
-
-run: ## Run the application (not recommended, use start instead)
-run:
-	@$(log) "Running app"
-	@# --use-mock-keychain keeps the unsigned development build from asking for
-	@# keychain access on every launch. This rule only ever runs unpackaged code,
-	@# so the packaged app still uses the real keychain.
-	@$(bin)/electron dist --use-mock-keychain
-
-build: ## Build all the JavaScript, without bundling the Electron app
-build: index preload client packages
-
-.PHONY: app
-app: ## Build the electron app
-app:
-	@$(log) "Bundling app..."
-	@$(bin)/electron-builder build --mac --universal --publish=never
+start: ## Start the app with the native shell and a Vite dev server
+start:
+	@$(log) "Starting app"
+	@$(bin)/tauri dev
 
 dev: ## Start the development server for interactive development
-dev:
-	@$(log) "Starting dev server..."
-	@$(bin)/concurrently "make client.dev" "sleep 3 && make start"
+dev: start
+
+.PHONY: app
+app: ## Build the macOS app
+app:
+	@$(log) "Bundling app..."
+	@$(bin)/tauri build --bundles dmg
 
 TSC_FLAGS =
 
@@ -72,13 +59,6 @@ lint:
 	@$(log) "Linting..."
 	@$(bin)/biome lint . $(SILENT)
 
-index: # Build the "server"-side js
-index: app/main.ts .env
-	@$(log) "Building app js..."
-	@mkdir -p dist
-	@config="$$($(bin)/dotenv -p FIREBASE_CONFIG)"; \
-		env NODE_ENV=development $(bin)/esbuild --bundle --format=cjs --platform=node --external:electron --loader:.png=file app/main.ts --outfile=dist/index.cjs --define:FIREBASE_CONFIG="$${config:-null}"
-
 .env: # Recover the public Firebase config NTS ships in its own frontend bundle
 .env:
 	@$(log) "Fetching Firebase config from nts.live..."
@@ -91,32 +71,15 @@ env:
 	@rm -f .env
 	@$(MAKE) --no-print-directory .env
 
-preload: # Build the preload script
-preload: dist/preload.js
-dist/preload.js: app/preload.js
-	@$(log) "Copying preload.js..."
-	@mkdir -p dist
-	@cp app/preload.js dist/preload.js
-
 .PHONY: client
 client: # Build the client-side code
 client:
 	@$(log) "Building client..."
-	@mkdir -p dist
-	@rm -rf dist/client/*
 	@$(bin)/vite build
 
 client.dev: # Start client-side development server
 client.dev:
 	@$(bin)/vite
-
-packages: # Copy package.json and amend it for Electron
-packages: dist/pnpm-lock.json
-dist/pnpm-lock.json: package.json
-	@$(log) "Copying package.json..."
-	@mkdir -p dist
-	@cat package.json | $(bin)/json -e 'this.dependencies=undefined' -e 'this.devDependencies=undefined' > dist/package.json
-	@cd dist && pnpm install --production
 
 logos: ## Convert all svg logos into their png counterparts
 logos: $(patsubst %.svg,%.png,$(wildcard logos/*.svg))

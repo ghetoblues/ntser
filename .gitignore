@@ -2,3 +2,5 @@ node_modules/
 dist/
 bundle/
 .env
+src-tauri/target/
+src-tauri/gen/

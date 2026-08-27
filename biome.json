@@ -2,7 +2,15 @@
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"files": {
 		"maxSize": 20971520,
-		"includes": ["**", "!**/*.svg", "!dist", "!bundle"]
+		"includes": [
+			"**",
+			"!**/*.svg",
+			"!dist",
+			"!bundle",
+			"!src-tauri/target",
+			"!src-tauri/gen",
+			"!src-tauri/icons"
+		]
 	},
 	"formatter": {
 		"indentStyle": "tab",

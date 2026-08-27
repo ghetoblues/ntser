@@ -10,10 +10,19 @@
 			;
 			connect-src
 				'self'
+				ipc:
+				http://ipc.localhost
 				https://identitytoolkit.googleapis.com
 				https://firestore.googleapis.com
 				https://securetoken.googleapis.com
 				https://www.nts.live
+				https://itunes.apple.com
+				https://*.googleapis.com
+			;
+			frame-src
+				https://www.mixcloud.com
+				https://w.soundcloud.com
+				https://widget.mixcloud.com
 			;
 			media-src
 				'self'

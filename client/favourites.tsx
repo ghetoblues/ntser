@@ -117,8 +117,8 @@ export function Favourites() {
 	if (state.data.length === 0) {
 		return (
 			<div className={css.notice}>
-				Nothing saved yet. Hit the heart on a live channel, or drop a link on the
-				menu icon.
+				Nothing saved yet. Hit the heart on a live channel, or paste a link under
+				Load Archive Show….
 			</div>
 		)
 	}

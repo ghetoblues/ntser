@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [Unreleased]
+
+## Changed
+
+- The Mac shell is Tauri 2 (system WebKit) instead of Electron, so a release is
+  a few megabytes rather than a couple of hundred. The React UI is the same.
+- Archive shows are loaded by pasting a link or opening a `.webloc`; dropping a
+  file onto the menu icon is gone with the Electron tray.
+
 # [0.4.0]
 
 First release of the [ghetoblues](https://github.com/ghetoblues/ntser)
