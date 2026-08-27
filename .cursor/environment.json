@@ -1,0 +1,4 @@
+{
+	"name": "NTSer",
+	"install": "corepack prepare pnpm@8.9.0 --activate && corepack pnpm install --frozen-lockfile && node node_modules/electron/install.js && make build"
+}
