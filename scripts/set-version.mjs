@@ -8,11 +8,13 @@ if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
 
 function replaceQuotedVersion(path, pattern) {
 	const src = readFileSync(path, "utf8")
-	const next = src.replace(pattern, `$1${version}$2`)
-	if (next === src) {
-		throw new Error(`could not update version in ${path}`)
+	if (!pattern.test(src)) {
+		throw new Error(`could not find a version field in ${path}`)
 	}
-	writeFileSync(path, next)
+	const next = src.replace(pattern, `$1${version}$2`)
+	if (next !== src) {
+		writeFileSync(path, next)
+	}
 }
 
 replaceQuotedVersion("package.json", /("version"\s*:\s*")\d+\.\d+\.\d+(")/)
