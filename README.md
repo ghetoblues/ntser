@@ -21,9 +21,14 @@ Van Snick, same MIT licence. Unofficial, not affiliated with NTS.
 
 ## Install
 
-Take the `.dmg` from [releases](https://github.com/ghetoblues/ntser/releases)
-and drag the app to Applications. It is unsigned, so the first launch is refused
-— allow it under `System Settings > Privacy & Security`.
+Take the `.dmg` for your Mac from
+[releases](https://github.com/ghetoblues/ntser/releases):
+
+- Apple Silicon (M1 and later): `NTSer-*-arm64.dmg`
+- Intel: `NTSer-*-x64.dmg`
+
+Drag the app to Applications. It is unsigned, so the first launch is refused —
+allow it under `System Settings > Privacy & Security`.
 
 ## Use
 
@@ -48,8 +53,8 @@ account, signed in from the menu. Everything else works without one.
 
 ```sh
 make dev    # run it, renderer reloads on save
-make check  # lint, format, types
-make app    # bundle to bundle/mac-universal
+make check  # lint, format, types, tests
+make app    # bundle to bundle/mac-* for this machine
 make help   # every rule
 ```
 

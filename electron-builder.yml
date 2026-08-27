@@ -3,12 +3,19 @@ appId: "org.observepeople.ntser"
 
 # Seals the bundle with an ad-hoc signature once electron-builder has skipped
 # signing; see the script for why an unsealed bundle is worse than an unsigned
-# one.
+# one. Also drops unused Chromium locales and SwiftShader before that seal.
 afterPack: scripts/adhoc-sign.mjs
 
+# A universal binary is two copies of Chromium glued together. Ship one chip
+# per disk image instead; CI builds both, `make app` builds this machine.
 directories:
   app: dist
   output: bundle
+
+# No native modules: the main process is one esbuild bundle. Skip a rebuild
+# pass, and do not pack a production node_modules if one sneaks into dist.
+asar: true
+npmRebuild: false
 
 mac:
   # Signing needs a paid Developer ID. Without one, electron-builder would reach
@@ -18,13 +25,11 @@ mac:
   identity: null
   icon: app/icon.icns
   category: public.app-category.music
+  electronLanguages:
+    - en
   target:
-    - target: dir
-      arch:
-        - universal
-    - target: dmg
-      arch:
-        - universal
+    - dir
+    - dmg
 
 fileAssociations:
   ext: webloc

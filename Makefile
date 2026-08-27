@@ -21,6 +21,8 @@ help: ## Show this help.
 bundle: build app
 
 start: ## Start the app, making sure it is build to the latest version
+start: NODE_ENV = development
+start: ESBUILD_FLAGS =
 start: index preload run
 
 run: ## Run the application (not recommended, use start instead)
@@ -34,11 +36,17 @@ run:
 build: ## Build all the JavaScript, without bundling the Electron app
 build: index preload client packages
 
+# GitHub Actions sets CI=true. Build both Mac chips there so each user
+# downloads one copy of Chromium; locally, only the machine you are on.
+ifeq ($(CI),true)
+MAC_ARCHS ?= --arm64 --x64
+endif
+
 .PHONY: app
-app: ## Build the electron app
+app: ## Build the electron app for this Mac (both chips on CI)
 app:
 	@$(log) "Bundling app..."
-	@$(bin)/electron-builder build --mac --universal --publish=never
+	@$(bin)/electron-builder build --mac $(MAC_ARCHS) --publish=never
 
 dev: ## Start the development server for interactive development
 dev:
@@ -72,12 +80,17 @@ lint:
 	@$(log) "Linting..."
 	@$(bin)/biome lint . $(SILENT)
 
+# Production minify (the packaged app). `make start` overrides these so the
+# unpackaged main process stays readable.
+NODE_ENV ?= production
+ESBUILD_FLAGS ?= --minify
+
 index: # Build the "server"-side js
 index: app/main.ts .env
 	@$(log) "Building app js..."
 	@mkdir -p dist
 	@config="$$($(bin)/dotenv -p FIREBASE_CONFIG)"; \
-		env NODE_ENV=development $(bin)/esbuild --bundle --format=cjs --platform=node --external:electron --loader:.png=file app/main.ts --outfile=dist/index.cjs --define:FIREBASE_CONFIG="$${config:-null}"
+		env NODE_ENV=$(NODE_ENV) $(bin)/esbuild --bundle --format=cjs --platform=node --external:electron --loader:.png=file app/main.ts --outfile=dist/index.cjs --define:FIREBASE_CONFIG="$${config:-null}" --define:process.env.NODE_ENV="\"$(NODE_ENV)\"" $(ESBUILD_FLAGS)
 
 .env: # Recover the public Firebase config NTS ships in its own frontend bundle
 .env:
@@ -111,17 +124,21 @@ client.dev:
 	@$(bin)/vite
 
 packages: # Copy package.json and amend it for Electron
-packages: dist/pnpm-lock.json
-dist/pnpm-lock.json: package.json
+packages: dist/package.json
+dist/package.json: package.json
 	@$(log) "Copying package.json..."
 	@mkdir -p dist
 	@cat package.json | $(bin)/json -e 'this.dependencies=undefined' -e 'this.devDependencies=undefined' > dist/package.json
-	@cd dist && pnpm install --production
 
 logos: ## Convert all svg logos into their png counterparts
 logos: $(patsubst %.svg,%.png,$(wildcard logos/*.svg))
 
-check: lint formatting typecheck
+test: ## Run unit tests
+test:
+	@$(log) "Testing..."
+	@node --test scripts/*.test.mjs
+
+check: lint formatting typecheck test
 
 
 # Git hooks

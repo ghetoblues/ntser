@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [Unreleased]
+
+## Changed
+
+- macOS releases are one disk image per chip instead of a universal binary, so
+  each machine downloads a single copy of Chromium. Apple Silicon uses the
+  `arm64` image; Intel uses `x64`.
+- Packaged apps drop unused Chromium locales and the Vulkan software renderer,
+  which this player never needs.
+
 # [0.4.0]
 
 First release of the [ghetoblues](https://github.com/ghetoblues/ntser)
