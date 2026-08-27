@@ -94,7 +94,15 @@ client.dev:
 	@$(bin)/vite
 
 logos: ## Convert all svg logos into their png counterparts
-logos: $(patsubst %.svg,%.png,$(wildcard logos/*.svg))
+logos: $(patsubst %.svg,%.png,$(wildcard logos/menu*.svg))
+
+.PHONY: icons
+icons: ## Build macOS/Windows app icons from the squircle SVG
+icons: logos/app-icon.svg
+	@$(log) "Building app icons..."
+	@$(bin)/tauri icon logos/app-icon.svg
+	@rm -rf src-tauri/icons/android src-tauri/icons/ios
+	@rm -f src-tauri/icons/Square*.png src-tauri/icons/StoreLogo.png
 
 check: lint formatting typecheck
 

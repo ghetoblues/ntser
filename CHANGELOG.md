@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+# [0.5.1]
+
+## Fixed
+
+- The Dock and Finder icon is the macOS squircle instead of a sharp square.
+
 # [0.5.0]
 
 ## Changed
