@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+# [0.5.0]
+
 ## Changed
 
-- The Mac shell is Tauri 2 (system WebKit) instead of Electron, so a release is
-  a few megabytes rather than a couple of hundred. The React UI is the same.
+- The Mac shell is Tauri 2 (system WebKit) instead of Electron. A release is a
+  couple of megabytes rather than a couple of hundred. The React UI is the same.
 - Archive shows are loaded by pasting a link or opening a `.webloc`; dropping a
   file onto the menu icon is gone with the Electron tray.
 

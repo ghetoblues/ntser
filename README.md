@@ -26,7 +26,8 @@ and drag the app to Applications. It is unsigned, so the first launch is refused
 — allow it under `System Settings > Privacy & Security`.
 
 The player uses the system WebKit instead of shipping Chromium, so the install
-is a few megabytes rather than a couple of hundred.
+is a couple of megabytes rather than a couple of hundred. The GitHub Release
+disk image is universal (Intel and Apple Silicon).
 
 ## Use
 
@@ -66,6 +67,17 @@ The live tracklist reads from NTS's Firebase project. That config is public, so
 the build does whenever `.env` is missing. Signing in needs `NTS_EMAIL` and
 `NTS_PASSWORD` in `.env` — development builds read those instead of the
 keychain. See `.env.example`.
+
+## Releasing
+
+Bump the version, tag it, and push the tag. CI builds a universal `.dmg` and
+publishes a GitHub Release.
+
+```sh
+make version VERSION=0.5.0
+git tag v0.5.0
+git push origin v0.5.0
+```
 
 ## Thanks
 

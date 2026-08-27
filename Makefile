@@ -26,11 +26,23 @@ start:
 dev: ## Start the development server for interactive development
 dev: start
 
+# GitHub Actions sets CI=true. Build a universal disk image there so Intel
+# and Apple Silicon both get one download; locally, only this machine.
+ifeq ($(CI),true)
+TAURI_FLAGS ?= --target universal-apple-darwin
+endif
+
 .PHONY: app
-app: ## Build the macOS app
+app: ## Build the macOS app (universal on CI)
 app:
 	@$(log) "Bundling app..."
-	@$(bin)/tauri build --bundles dmg
+	@$(bin)/tauri build --bundles dmg $(TAURI_FLAGS)
+
+.PHONY: version
+version: ## Set the version in package.json, Cargo.toml and tauri.conf.json
+version:
+	@test -n "$(VERSION)" || (echo "VERSION=x.y.z required" && exit 1)
+	@node scripts/set-version.mjs "$(VERSION)"
 
 TSC_FLAGS =
 
